@@ -1,0 +1,343 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grand Stay - Hotel Booking</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f4f6f8;color:#263238;line-height:1.6}
+header{background:#123b50;color:white;padding:20px 7%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+header h1{color:#f5c46b}
+nav{display:flex;flex-wrap:wrap;gap:14px}
+nav a{color:white;text-decoration:none;font-size:14px}
+nav a:hover{color:#f5c46b}
+.hero{text-align:center;padding:65px 20px;background:linear-gradient(120deg,#164e63,#287b85);color:white}
+.hero h2{font-size:36px;margin-bottom:10px}
+.hero p{margin-bottom:22px}
+button{border:none;padding:11px 17px;border-radius:5px;cursor:pointer;background:#e8ad46;color:#17252c;font-weight:bold;margin:4px}
+button:hover{opacity:.85}
+section{padding:35px 7%;scroll-margin-top:15px}
+h2.section-title{text-align:center;margin-bottom:22px;color:#164e63}
+.rooms{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.card{background:white;border-radius:10px;padding:20px;box-shadow:0 3px 12px #00000012}
+.room-image{font-size:58px;text-align:center;background:#e6f0f1;padding:20px;border-radius:8px;margin-bottom:12px}
+.price{font-size:21px;color:#087f5b;font-weight:bold;margin:8px 0}
+form{max-width:650px;margin:auto;background:white;padding:24px;border-radius:10px;box-shadow:0 3px 12px #00000012}
+input,select,textarea{width:100%;padding:11px;margin:6px 0 14px;border:1px solid #ccd5da;border-radius:5px;font:inherit}
+label{font-weight:bold}
+.notice{text-align:center;color:#52636a;margin:12px}
+.booking{background:white;padding:15px;margin:12px 0;border-radius:8px;border-left:4px solid #087f5b}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+footer{background:#123b50;color:white;text-align:center;padding:22px}
+.hidden{display:none}
+#message{text-align:center;margin:12px;font-weight:bold}
+@media(max-width:600px){header{justify-content:center;text-align:center}.hero h2{font-size:28px}section{padding:28px 5%}}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Grand Stay</h1>
+<nav>
+<a href="#home">Home</a>
+<a href="#rooms">Rooms</a>
+<a href="#booking">Book Now</a>
+<a href="#history">My Bookings</a>
+<a href="#admin">Admin</a>
+<a href="#about">About</a>
+<a href="#contact">Contact</a>
+</nav>
+</header>
+
+<div class="hero" id="home">
+<h2>Find Your Perfect Stay</h2>
+<p>Comfort, luxury and affordable rooms for every traveller.</p>
+<button onclick="document.getElementById('rooms').scrollIntoView({behavior:'smooth'})">Explore Rooms</button>
+</div>
+
+<section id="rooms">
+<h2 class="section-title">Our Room Types</h2>
+<div class="rooms" id="roomList"></div>
+</section>
+
+<section id="booking">
+<h2 class="section-title">Book Your Room</h2>
+<form id="bookingForm">
+<label for="guest">Guest Name</label>
+<input id="guest" required placeholder="Enter your name">
+
+<label for="email">Email Address</label>
+<input id="email" type="email" required placeholder="Enter your email">
+
+<label for="room">Room Type</label>
+<select id="room" required>
+<option value="">Select a room</option>
+</select>
+
+<label for="checkin">Arrival Date</label>
+<input id="checkin" type="date" required>
+
+<label for="checkout">Departure Date</label>
+<input id="checkout" type="date" required>
+
+<label for="guests">Number of Guests</label>
+<input id="guests" type="number" min="1" max="10" value="1" required>
+
+<button type="submit">Confirm Booking</button>
+<p id="message"></p>
+</form>
+<p class="notice">Demo only: no real payment is collected.</p>
+</section>
+
+<section id="history">
+<h2 class="section-title">Booking History</h2>
+<div id="bookingHistory"></div>
+</section>
+
+<section id="admin">
+<h2 class="section-title">Admin Panel — Demo</h2>
+<form id="adminForm">
+<label for="adminRoom">Select Room Type</label>
+<select id="adminRoom"></select>
+<label for="newPrice">New Price per Night (₹)</label>
+<input type="number" id="newPrice" min="1" required>
+<label for="newQuantity">Total Room Quantity</label>
+<input type="number" id="newQuantity" min="0" required>
+<button type="submit">Update Room Details</button>
+</form>
+<p class="notice">Educational demonstration only; this panel has no administrator authentication.</p>
+</section>
+
+<section id="about">
+<h2 class="section-title">About Us</h2>
+<div class="card">
+<p>Grand Stay offers comfortable and affordable accommodation for families, tourists and business travellers. Our goal is to make every stay pleasant and memorable.</p>
+</div>
+</section>
+
+<section id="contact">
+<h2 class="section-title">Contact Us</h2>
+<div class="info-grid">
+<div class="card"><h3>Address</h3><p>Grand Stay Hotel, Chennai, Tamil Nadu, India.</p></div>
+<div class="card"><h3>Phone</h3><p>+91 98765 43210</p></div>
+<div class="card"><h3>Email</h3><p>info@grandstay.example</p></div>
+</div>
+</section>
+
+<section id="faq">
+<h2 class="section-title">Customer Service FAQ</h2>
+<div class="card">
+<details><summary>How can I book a room?</summary><p>Select a room and enter your arrival and departure dates in the booking form.</p></details>
+<hr>
+<details><summary>Can I cancel my booking?</summary><p>In this demo, bookings can be cancelled at least three days before arrival.</p></details>
+<hr>
+<details><summary>Are payments processed online?</summary><p>No. This educational website does not process real payments.</p></details>
+</div>
+</section>
+
+<section id="travel">
+<h2 class="section-title">Local Travel Guide</h2>
+<div class="info-grid">
+<div class="card"><h3>Marina Beach</h3><p>Enjoy a walk along Chennai's famous coastline.</p></div>
+<div class="card"><h3>Kapaleeshwarar Temple</h3><p>Explore a well-known Chennai cultural landmark.</p></div>
+<div class="card"><h3>Government Museum</h3><p>Discover history, art and archaeological collections.</p></div>
+</div>
+</section>
+
+<section id="privacy">
+<h2 class="section-title">Privacy Policy</h2>
+<div class="card">
+<p>This demonstration stores booking details in your browser's local storage. The information is not sent to a hotel server. Avoid entering real personal or payment information. Clearing browser storage may delete the demo bookings.</p>
+</div>
+</section>
+
+<footer>
+<p>&copy; 2026 Grand Stay Hotel | Internet Programming Lab Experiment</p>
+<p><a href="#faq" style="color:white">FAQ</a> | <a href="#travel" style="color:white">Travel Guide</a> | <a href="#privacy" style="color:white">Privacy Policy</a></p>
+</footer>
+
+<script>
+const defaultRooms = [
+ {name:"Standard Room",price:1500,quantity:10,icon:"🛏️",description:"A cosy room for solo travellers and couples."},
+ {name:"Deluxe Room",price:2500,quantity:8,icon:"🛎️",description:"A spacious room with upgraded amenities."},
+ {name:"Family Suite",price:4000,quantity:5,icon:"🏨",description:"Extra space for families and small groups."},
+ {name:"Luxury Suite",price:6500,quantity:3,icon:"✨",description:"Premium comfort for a luxurious stay."}
+];
+
+let rooms;
+let bookings;
+
+try {
+ rooms = JSON.parse(localStorage.getItem("gs_rooms")) || defaultRooms.map(r=>({...r}));
+ bookings = JSON.parse(localStorage.getItem("gs_bookings")) || [];
+} catch(e) {
+ rooms = defaultRooms.map(r=>({...r}));
+ bookings = [];
+}
+
+const $ = id => document.getElementById(id);
+const today = new Date();
+today.setMinutes(today.getMinutes()-today.getTimezoneOffset());
+$("checkin").min = today.toISOString().slice(0,10);
+$("checkout").min = $("checkin").min;
+
+function save(){
+ localStorage.setItem("gs_rooms",JSON.stringify(rooms));
+ localStorage.setItem("gs_bookings",JSON.stringify(bookings));
+}
+
+function roomOptions(){
+ $("room").innerHTML='<option value="">Select a room</option>';
+ $("adminRoom").innerHTML="";
+ rooms.forEach((r,i)=>{
+  $("room").add(new Option(r.name+" - ₹"+r.price+"/night",i));
+  $("adminRoom").add(new Option(r.name,i));
+ });
+}
+
+function renderRooms(){
+ $("roomList").innerHTML=rooms.map((r,i)=>`
+ <article class="card">
+ <div class="room-image">${r.icon}</div>
+ <h3>${r.name}</h3>
+ <p>${r.description}</p>
+ <p class="price">₹${r.price} / night</p>
+ <p>Room inventory: ${r.quantity}</p>
+ <button onclick="chooseRoom(${i})">Book This Room</button>
+ </article>`).join("");
+ roomOptions();
+}
+
+function chooseRoom(i){
+ $("room").value=i;
+ $("booking").scrollIntoView({behavior:"smooth"});
+}
+
+$("checkin").addEventListener("change",()=>{
+ $("checkout").min=$("checkin").value;
+ if($("checkout").value && $("checkout").value<=$("checkin").value)
+  $("checkout").value="";
+});
+
+function available(roomIndex,start,end){
+ const overlapping=bookings.filter(b=>
+  Number(b.roomIndex)===Number(roomIndex) &&
+  b.status==="Confirmed" &&
+  b.checkin<end && b.checkout>start
+ ).length;
+ return rooms[roomIndex].quantity-overlapping;
+}
+
+$("bookingForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const roomIndex=Number($("room").value);
+ const start=$("checkin").value;
+ const end=$("checkout").value;
+ const arrival=new Date(start+"T00:00:00");
+ const departure=new Date(end+"T00:00:00");
+ const nights=(departure-arrival)/86400000;
+
+ if(!$("room").value || !Number.isInteger(roomIndex) || !rooms[roomIndex]){
+  $("message").textContent="Please select a valid room.";
+  return;
+ }
+ if(nights<=0){
+  $("message").textContent="Departure must be after arrival.";
+  return;
+ }
+ if(available(roomIndex,start,end)<=0){
+  $("message").textContent="Sorry, no rooms are available for those dates.";
+  return;
+ }
+
+ const booking={
+  id:Date.now(),
+  guest:$("guest").value.trim(),
+  email:$("email").value.trim(),
+  roomIndex,
+  checkin:start,
+  checkout:end,
+  guests:Number($("guests").value),
+  total:nights*rooms[roomIndex].price,
+  status:"Confirmed"
+ };
+
+ bookings.push(booking);
+ save();
+ $("message").textContent="Booking confirmed! Reference: GS"+booking.id;
+ $("bookingForm").reset();
+ $("checkin").min=today.toISOString().slice(0,10);
+ $("checkout").min=$("checkin").min;
+ renderHistory();
+});
+
+function renderHistory(){
+ if(!bookings.length){
+  $("bookingHistory").innerHTML='<p class="notice">No bookings yet. Make your first booking above.</p>';
+  return;
+ }
+ $("bookingHistory").innerHTML=[...bookings].reverse().map(b=>{
+  const r=rooms[b.roomIndex];
+  const arrival=new Date(b.checkin+"T00:00:00");
+  const daysBefore=(arrival-new Date(new Date().toDateString()))/86400000;
+  const canCancel=b.status==="Confirmed" && daysBefore>=3;
+  return `<article class="booking">
+   <h3>${r?r.name:"Room"}</h3>
+   <p>Guest: ${escapeHTML(b.guest)}</p>
+   <p>Arrival: ${b.checkin} | Departure: ${b.checkout}</p>
+   <p>Guests: ${b.guests} | Total: ₹${b.total}</p>
+   <p>Status: <strong>${b.status}</strong></p>
+   ${canCancel?`<button onclick="cancelBooking(${b.id})">Cancel Booking</button>`:
+   b.status==="Confirmed"?'<p>Cancellation is allowed only at least 3 days before arrival.</p>':''}
+  </article>`;
+ }).join("");
+}
+
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+function cancelBooking(id){
+ const b=bookings.find(x=>x.id===id);
+ if(!b || b.status!=="Confirmed") return;
+ const days=(new Date(b.checkin+"T00:00:00")-new Date(new Date().toDateString()))/86400000;
+ if(days<3){
+  alert("Bookings can only be cancelled at least 3 days before arrival.");
+  return;
+ }
+ if(confirm("Cancel this booking?")){
+  b.status="Cancelled";
+  save();
+  renderHistory();
+ }
+}
+
+$("adminForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const i=Number($("adminRoom").value);
+ const price=Number($("newPrice").value);
+ const quantity=Number($("newQuantity").value);
+ if(!rooms[i] || price<=0 || quantity<0 ||
+    !Number.isFinite(price) || !Number.isInteger(quantity)){
+  alert("Enter a valid price and room quantity.");
+  return;
+ }
+ rooms[i].price=price;
+ rooms[i].quantity=quantity;
+ save();
+ renderRooms();
+ renderHistory();
+ alert("Room details updated successfully!");
+});
+
+renderRooms();
+renderHistory();
+</script>
+</body>
+</html>

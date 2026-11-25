@@ -1,0 +1,555 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechSavvy | Online Electronics Store</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#2457d6;--dark:#17233d;--light:#f1f5ff;--border:#dfe6f2;--green:#13845b}
+body{font-family:Arial,sans-serif;background:#f7f9fd;color:#243047;line-height:1.6}
+header{background:#17233d;color:white;padding:15px 5%;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+.logo{font-size:25px;font-weight:bold;color:#80a5ff}
+nav{display:flex;gap:5px;flex-wrap:wrap}
+button,.btn{border:0;border-radius:7px;padding:10px 14px;background:var(--blue);color:white;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-block}
+button:hover,.btn:hover{opacity:.85}
+nav button{background:transparent;color:white;padding:8px;font-size:13px}
+nav button:hover{background:#33415e}
+.container{width:92%;max-width:1200px;margin:28px auto}
+.hidden{display:none!important}
+.hero{background:linear-gradient(120deg,#17233d,#315bd0);color:white;border-radius:17px;padding:40px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.2;margin:12px 0}
+.hero p{max-width:600px;margin-bottom:18px}
+.hero-icon{font-size:85px}
+section{margin:30px 0}
+h2{color:var(--dark);margin-bottom:16px}
+h3{margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card,.panel{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:0 4px 15px #1d31510b}
+.product-icon{font-size:48px}
+.price{font-size:21px;font-weight:bold;color:var(--blue);margin:8px 0}
+.old-price{text-decoration:line-through;color:#8490a1;font-size:14px}
+.small{font-size:13px;color:#718096}
+.tag{display:inline-block;background:#e2f5eb;color:#13724f;padding:3px 9px;border-radius:20px;font-size:12px}
+form{display:grid;gap:12px}
+label{font-size:14px;font-weight:bold}
+input,select,textarea{width:100%;padding:11px;border:1px solid #ccd6e6;border-radius:7px;font:inherit;color:#243047;background:white}
+textarea{resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.secondary{background:#e8edf8;color:#243047}
+.danger{background:#c63748}
+.success{background:var(--green)}
+.product-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.product-actions button{flex:1}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{text-align:left;padding:11px;border-bottom:1px solid var(--border);font-size:13px}
+th{background:var(--light)}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+footer{margin-top:45px;padding:25px;background:var(--dark);color:white;text-align:center}
+#toast{display:none;position:fixed;bottom:20px;right:20px;z-index:10;background:var(--dark);color:white;padding:14px 20px;border-radius:9px;max-width:90%}
+.stat{font-size:27px;color:var(--blue);font-weight:bold}
+@media(max-width:650px){header{position:static}.container{width:95%}.hero{padding:25px}.hero-icon{font-size:55px}.two{grid-template-columns:1fr}nav button{font-size:11px;padding:6px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">⚡ TechSavvy</div>
+ <nav>
+  <button onclick="showPage('home')">Home</button>
+  <button onclick="showPage('shop')">Shop</button>
+  <button onclick="showPage('cart')">Cart (<span id="cartCount">0</span>)</button>
+  <button onclick="showPage('wishlist')">Wishlist</button>
+  <button onclick="showPage('orders')">My Orders</button>
+  <button onclick="showPage('account')">Account</button>
+  <button onclick="showPage('reviews')">Reviews</button>
+  <button onclick="showPage('admin')">Admin</button>
+ </nav>
+</header>
+
+<main class="container">
+<!-- HOME -->
+<div id="home" class="page">
+ <div class="hero">
+  <div>
+   <span class="tag">SMART TECH. SMART DEALS.</span>
+   <h1>Upgrade your world<br>with TechSavvy.</h1>
+   <p>Discover smartphones, laptops, tablets, audio devices, and accessories at exciting prices.</p>
+   <button onclick="showPage('shop')">Explore Products</button>
+   <button style="background:white;color:#17233d" onclick="showPage('account')">Login / Register</button>
+  </div>
+  <div class="hero-icon">💻📱</div>
+ </div>
+ <section>
+  <h2>Shop by Category</h2>
+  <div class="grid" id="homeCategories"></div>
+ </section>
+ <section>
+  <div class="row"><h2>Popular Products</h2><button onclick="showPage('shop')">View All</button></div>
+  <div class="grid" id="featuredProducts"></div>
+ </section>
+ <section class="panel">
+  <h2>Why Shop With TechSavvy?</h2>
+  <div class="grid">
+   <div><h3>🚚 Convenient Shopping</h3><p>Browse products and place orders online.</p></div>
+   <div><h3>🏷️ Great Deals</h3><p>Find promotional prices on selected products.</p></div>
+   <div><h3>📦 Order Tracking</h3><p>Check order status and purchase history.</p></div>
+   <div><h3>💬 Customer Reviews</h3><p>Read and share product feedback.</p></div>
+  </div>
+ </section>
+</div>
+
+<!-- SHOP -->
+<div id="shop" class="page hidden">
+ <h2>Product Catalogue</h2>
+ <div class="panel">
+  <div class="two">
+   <div><label>Search Products</label><input id="search" placeholder="Search phones, laptops, headphones..."></div>
+   <div><label>Category</label><select id="category"><option value="">All Categories</option></select></div>
+  </div>
+  <div class="two" style="margin-top:12px">
+   <div><label>Subcategory</label><select id="subcategory"><option value="">All Subcategories</option></select></div>
+   <div><label>Sort By</label><select id="sort"><option value="popular">Most Popular</option><option value="low">Price: Low to High</option><option value="high">Price: High to Low</option><option value="name">Name: A to Z</option></select></div>
+  </div>
+  <div class="two" style="margin-top:12px">
+   <div><label>Maximum Price (₹)</label><input id="maxPrice" type="number" min="0" placeholder="No limit"></div>
+   <div style="display:flex;align-items:end;gap:8px"><button onclick="renderShop()">Apply Filters</button><button class="secondary" onclick="clearFilters()">Clear</button></div>
+  </div>
+ </div>
+ <p id="productCount" class="small" style="margin:15px 0"></p>
+ <div class="grid" id="productList"></div>
+</div>
+
+<!-- CART -->
+<div id="cart" class="page hidden">
+ <h2>Shopping Cart</h2>
+ <div id="cartItems"></div>
+ <div id="cartSummary" class="panel hidden" style="margin-top:18px">
+  <div class="row"><span>Subtotal</span><strong id="subtotal"></strong></div>
+  <div class="row"><span>Discount</span><strong id="discount"></strong></div>
+  <div class="row"><span>Delivery</span><strong id="delivery"></strong></div>
+  <hr>
+  <div class="row"><h3>Total</h3><h3 id="total"></h3></div>
+  <div class="two" style="margin-top:12px">
+   <div><label>Promo Code</label><input id="promo" placeholder="Try TECH10"></div>
+   <div style="display:flex;align-items:end"><button onclick="applyPromo()">Apply Discount</button></div>
+  </div>
+  <button style="margin-top:15px" onclick="showPage('checkout')">Proceed to Checkout</button>
+ </div>
+</div>
+
+<!-- CHECKOUT -->
+<div id="checkout" class="page hidden">
+ <h2>Checkout</h2>
+ <div class="panel">
+  <form id="checkoutForm">
+   <div class="two"><div><label>Customer Name</label><input id="cName" required></div><div><label>Email Address</label><input id="cEmail" type="email" required></div></div>
+   <div class="two"><div><label>Phone Number</label><input id="cPhone" type="tel" required></div><div><label>City</label><input id="cCity" required></div></div>
+   <label>Delivery Address</label><textarea id="cAddress" rows="3" required></textarea>
+   <label>Payment Method</label>
+   <select id="payment"><option>Cash on Delivery</option><option>UPI (demo)</option><option>Credit/Debit Card (demo)</option><option>Net Banking (demo)</option></select>
+   <div class="panel" style="background:var(--light)">
+    <div class="row"><span>Order Total</span><h3 id="checkoutTotal">₹0</h3></div>
+    <p class="small">Online payment methods are simulated; no card or banking information is collected.</p>
+   </div>
+   <button type="submit">Place Order</button>
+  </form>
+ </div>
+</div>
+
+<!-- ORDERS -->
+<div id="orders" class="page hidden">
+ <h2>Order History & Tracking</h2>
+ <div class="panel">
+  <form id="orderLookup">
+   <label>Enter the email used at checkout</label>
+   <input id="orderEmail" type="email" required placeholder="you@example.com">
+   <button type="submit">View My Orders</button>
+  </form>
+ </div>
+ <section><div id="orderList" class="grid"></div></section>
+</div>
+
+<!-- WISHLIST -->
+<div id="wishlist" class="page hidden">
+ <h2>My Wishlist</h2>
+ <p class="small">Save products you would like to buy later.</p>
+ <div class="grid" id="wishlistItems"></div>
+</div>
+
+<!-- ACCOUNT -->
+<div id="account" class="page hidden">
+ <h2>Customer Account</h2>
+ <div class="grid">
+  <div class="panel">
+   <h3>Create Account</h3>
+   <form id="registerForm">
+    <label>Full Name</label><input id="regName" required>
+    <label>Email</label><input id="regEmail" type="email" required>
+    <label>Phone</label><input id="regPhone" type="tel" required>
+    <label>Password</label><input id="regPassword" type="password" minlength="6" required>
+    <button type="submit">Register</button>
+   </form>
+  </div>
+  <div class="panel">
+   <h3>Customer Login</h3>
+   <form id="loginForm">
+    <label>Email</label><input id="loginEmail" type="email" required>
+    <label>Password</label><input id="loginPassword" type="password" required>
+    <button type="submit">Login</button>
+   </form>
+   <hr>
+   <h3>Current Session</h3><p id="sessionInfo">You are browsing as a guest.</p>
+   <button class="secondary" onclick="logout()">Logout</button>
+  </div>
+ </div>
+ <section class="panel">
+  <h3>Personalized Recommendations</h3>
+  <p class="small">Recommendations are based on the category you browse most often in this demo.</p>
+  <div class="grid" id="recommendations"></div>
+ </section>
+</div>
+
+<!-- REVIEWS -->
+<div id="reviews" class="page hidden">
+ <h2>Product Reviews</h2>
+ <div class="panel">
+  <form id="reviewForm">
+   <label>Your Name</label><input id="reviewName" required>
+   <label>Product</label><select id="reviewProduct"></select>
+   <label>Rating</label><select id="rating"><option value="5">★★★★★ Excellent</option><option value="4">★★★★ Very Good</option><option value="3">★★★ Good</option><option value="2">★★ Fair</option><option value="1">★ Poor</option></select>
+   <label>Your Review</label><textarea id="reviewText" rows="3" required></textarea>
+   <button type="submit">Submit Review</button>
+  </form>
+ </div>
+ <section><h2>Customer Feedback</h2><div id="reviewList" class="grid"></div></section>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="page hidden">
+ <h2>Administrator Dashboard</h2>
+ <div id="adminLogin" class="panel">
+  <form id="adminLoginForm">
+   <label>Admin Password</label><input id="adminPassword" type="password" required>
+   <button type="submit">Login as Admin</button>
+  </form>
+  <p class="small">Demonstration password: <b>TECH123</b></p>
+ </div>
+ <div id="adminPanel" class="hidden">
+  <div id="adminStats" class="grid"></div>
+  <section><h3>Manage Product Catalogue</h3>
+   <form id="productForm" class="panel">
+    <h3 id="productFormTitle">Add New Product</h3>
+    <input id="editId" type="hidden">
+    <label>Product Name</label><input id="aName" required>
+    <div class="two"><div><label>Category</label><select id="aCategory"></select></div><div><label>Subcategory</label><input id="aSubcategory" required></div></div>
+    <div class="two"><div><label>Price (₹)</label><input id="aPrice" type="number" min="1" required></div><div><label>Stock Quantity</label><input id="aStock" type="number" min="0" required></div></div>
+    <label>Product Description</label><textarea id="aDescription" rows="3" required></textarea>
+    <label>Product Emoji</label><input id="aEmoji" placeholder="e.g. 📱">
+    <div class="row"><button type="submit">Save Product</button><button type="button" class="secondary" onclick="resetProductForm()">Clear Form</button></div>
+   </form>
+  </section>
+  <section><h3>All Products</h3><div id="adminProducts" class="table-wrap"></div></section>
+  <section><h3>Customer Orders & Checkout Information</h3><div id="adminOrders" class="table-wrap"></div></section>
+  <section><h3>Customer Accounts</h3><div id="adminCustomers" class="table-wrap"></div></section>
+  <section><h3>Review Statistics</h3><div id="adminReviews" class="panel"></div></section>
+  <button class="danger" onclick="adminLogout()">Logout Admin</button>
+ </div>
+</div>
+</main>
+
+<footer>© 2026 TechSavvy Electronics | Online Shopping System</footer>
+<div id="toast"></div>
+
+<script>
+const categories=[
+ {name:"Smartphones",emoji:"📱",subs:["Android Phones","iPhones"]},
+ {name:"Laptops",emoji:"💻",subs:["Gaming Laptops","Business Laptops"]},
+ {name:"Tablets",emoji:"📲",subs:["Android Tablets","iPads"]},
+ {name:"Accessories",emoji:"🎧",subs:["Headphones","Chargers","Keyboards","Smartwatches"]}
+];
+const initialProducts=[
+ {id:1,name:"Galaxy Pro Smartphone",category:"Smartphones",subcategory:"Android Phones",price:24999,stock:12,description:"A powerful smartphone with a vibrant display, high-quality camera and long battery life.",emoji:"📱",popular:100},
+ {id:2,name:"iPhone 15",category:"Smartphones",subcategory:"iPhones",price:54999,stock:8,description:"A premium smartphone designed for performance, photography and everyday productivity.",emoji:"📱",popular:95},
+ {id:3,name:"TechBook Air Laptop",category:"Laptops",subcategory:"Business Laptops",price:62999,stock:7,description:"A lightweight laptop for study, office work, multitasking and entertainment.",emoji:"💻",popular:90},
+ {id:4,name:"Gaming Beast Laptop",category:"Laptops",subcategory:"Gaming Laptops",price:89999,stock:4,description:"A high-performance laptop designed for gaming and demanding applications.",emoji:"🎮",popular:85},
+ {id:5,name:"TabPlus 11",category:"Tablets",subcategory:"Android Tablets",price:18999,stock:10,description:"A versatile tablet for reading, studying, streaming and productivity.",emoji:"📲",popular:70},
+ {id:6,name:"iPad Air",category:"Tablets",subcategory:"iPads",price:49999,stock:6,description:"A slim and capable tablet for creative work, entertainment and note-taking.",emoji:"📲",popular:80},
+ {id:7,name:"Wireless Headphones",category:"Accessories",subcategory:"Headphones",price:2499,stock:25,description:"Comfortable wireless headphones with clear audio for music and calls.",emoji:"🎧",popular:88},
+ {id:8,name:"Fast USB-C Charger",category:"Accessories",subcategory:"Chargers",price:999,stock:30,description:"A compact charging accessory for compatible phones, tablets and other devices.",emoji:"🔌",popular:75},
+ {id:9,name:"Mechanical Keyboard",category:"Accessories",subcategory:"Keyboards",price:3499,stock:15,description:"A responsive keyboard for typing, work and gaming.",emoji:"⌨️",popular:65},
+ {id:10,name:"Smart Fitness Watch",category:"Accessories",subcategory:"Smartwatches",price:4999,stock:11,description:"A smartwatch with activity features, notifications and customizable watch faces.",emoji:"⌚",popular:78}
+];
+function load(k,defaults){try{const x=localStorage.getItem(k);return x?JSON.parse(x):JSON.parse(JSON.stringify(defaults));}catch(e){return JSON.parse(JSON.stringify(defaults));}}
+let products=load("ts_products",initialProducts);
+let cart=load("ts_cart",[]);
+let wishlist=load("ts_wishlist",[]);
+let orders=load("ts_orders",[]);
+let customers=load("ts_customers",[]);
+let reviews=load("ts_reviews",[]);
+let currentEmail="";
+let adminOn=false;
+let appliedPromo=false;
+let browsing={};
+
+function save(){
+ try{
+  localStorage.setItem("ts_products",JSON.stringify(products));
+  localStorage.setItem("ts_cart",JSON.stringify(cart));
+  localStorage.setItem("ts_wishlist",JSON.stringify(wishlist));
+  localStorage.setItem("ts_orders",JSON.stringify(orders));
+  localStorage.setItem("ts_customers",JSON.stringify(customers));
+  localStorage.setItem("ts_reviews",JSON.stringify(reviews));
+ }catch(e){notify("Unable to save data. Browser storage may be full.");}
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function notify(s){const t=document.getElementById("toast");t.textContent=s;t.style.display="block";setTimeout(()=>t.style.display="none",3000);}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN");}
+function productById(id){return products.find(p=>p.id===Number(id));}
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+ if(id==="shop")renderShop();
+ if(id==="cart")renderCart();
+ if(id==="wishlist")renderWishlist();
+ if(id==="orders")renderOrders(document.getElementById("orderEmail").value);
+ if(id==="reviews")renderReviews();
+ if(id==="account")renderAccount();
+ if(id==="admin"&&adminOn)renderAdmin();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderCategoryOptions(){
+ const opts=categories.map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");
+ document.getElementById("category").innerHTML='<option value="">All Categories</option>'+opts;
+ document.getElementById("aCategory").innerHTML=opts;
+ document.getElementById("homeCategories").innerHTML=categories.map(c=>`
+ <div class="card" style="cursor:pointer" onclick="chooseCategory('${esc(c.name)}')">
+ <div class="product-icon">${c.emoji}</div><h3>${esc(c.name)}</h3>
+ <p class="small">${c.subs.map(esc).join(" · ")}</p><button>Browse Category</button></div>`).join("");
+ updateSubcategories();
+}
+function updateSubcategories(){
+ const c=document.getElementById("category").value;
+ const subs=c?categories.find(x=>x.name===c).subs:categories.flatMap(x=>x.subs);
+ document.getElementById("subcategory").innerHTML='<option value="">All Subcategories</option>'+subs.map(s=>`<option>${esc(s)}</option>`).join("");
+}
+document.getElementById("category").addEventListener("change",updateSubcategories);
+function chooseCategory(c){showPage("shop");document.getElementById("category").value=c;updateSubcategories();renderShop();}
+function productCard(p){
+ const reviewsFor=reviews.filter(r=>r.productId===p.id);
+ const avg=reviewsFor.length?(reviewsFor.reduce((a,r)=>a+r.rating,0)/reviewsFor.length).toFixed(1):"New";
+ return `<div class="card"><div class="product-icon">${esc(p.emoji||"📦")}</div>
+ <span class="tag">${esc(p.category)}</span><h3>${esc(p.name)}</h3>
+ <p class="small">${esc(p.subcategory)}</p><p>${esc(p.description)}</p>
+ <p class="small">⭐ ${avg} · ${reviewsFor.length} review(s)</p>
+ <p class="price">${money(p.price)}</p>
+ <p class="small">${p.stock>0?"In stock: "+p.stock:"Out of stock"}</p>
+ <div class="product-actions">
+ <button onclick="addToCart(${p.id})" ${p.stock<=0?"disabled":""}>Add to Cart</button>
+ <button class="secondary" onclick="toggleWishlist(${p.id})">${wishlist.includes(p.id)?"♥ Saved":"♡ Wishlist"}</button>
+ </div></div>`;
+}
+function renderShop(){
+ const q=document.getElementById("search").value.toLowerCase().trim();
+ const cat=document.getElementById("category").value;
+ const sub=document.getElementById("subcategory").value;
+ const max=Number(document.getElementById("maxPrice").value)||Infinity;
+ let list=products.filter(p=>(!q||(p.name+" "+p.category+" "+p.subcategory+" "+p.description).toLowerCase().includes(q))&&(!cat||p.category===cat)&&(!sub||p.subcategory===sub)&&p.price<=max);
+ const sort=document.getElementById("sort").value;
+ if(sort==="low")list.sort((a,b)=>a.price-b.price);
+ if(sort==="high")list.sort((a,b)=>b.price-a.price);
+ if(sort==="name")list.sort((a,b)=>a.name.localeCompare(b.name));
+ if(sort==="popular")list.sort((a,b)=>(b.popular||0)-(a.popular||0));
+ document.getElementById("productCount").textContent=list.length+" product(s) found.";
+ document.getElementById("productList").innerHTML=list.map(productCard).join("")||"<p>No products found. Try another search.</p>";
+}
+function clearFilters(){
+ document.getElementById("search").value="";document.getElementById("category").value="";
+ updateSubcategories();document.getElementById("maxPrice").value="";document.getElementById("sort").value="popular";renderShop();
+}
+document.getElementById("search").addEventListener("input",renderShop);
+document.getElementById("sort").addEventListener("change",renderShop);
+function addToCart(id){
+ const p=productById(id);if(!p||p.stock<=0){notify("This product is out of stock.");return;}
+ const item=cart.find(x=>x.id===id);
+ if(item){if(item.qty>=p.stock){notify("Not enough stock available.");return;}item.qty++;}
+ else cart.push({id,qty:1});
+ browsing[p.category]=(browsing[p.category]||0)+1;save();updateCartCount();notify("Product added to cart.");renderShop();
+}
+function updateCartCount(){document.getElementById("cartCount").textContent=cart.reduce((n,x)=>n+x.qty,0);}
+function setQty(id,qty){
+ const p=productById(id);if(!p)return;
+ qty=Number(qty);
+ if(!Number.isInteger(qty)||qty<1){cart=cart.filter(x=>x.id!==id);}
+ else if(qty>p.stock){notify("Quantity exceeds available stock.");}
+ else{const x=cart.find(x=>x.id===id);if(x)x.qty=qty;}
+ save();renderCart();updateCartCount();
+}
+function removeCart(id){cart=cart.filter(x=>x.id!==id);save();renderCart();updateCartCount();}
+function calculate(){
+ const subtotal=cart.reduce((n,x)=>{const p=productById(x.id);return n+(p?p.price*x.qty:0);},0);
+ const discount=appliedPromo?Math.round(subtotal*.10):0;
+ const delivery=subtotal>0&&subtotal-discount<50000?99:0;
+ return {subtotal,discount,delivery,total:subtotal-discount+delivery};
+}
+function renderCart(){
+ const valid=cart.filter(x=>productById(x.id));
+ document.getElementById("cartItems").innerHTML=valid.length?valid.map(x=>{
+ const p=productById(x.id);
+ return `<div class="card row" style="margin-bottom:12px">
+ <div><h3>${esc(p.name)}</h3><p class="small">${esc(p.category)} · ${money(p.price)} each</p></div>
+ <div style="min-width:110px"><label>Quantity</label><input type="number" min="1" max="${p.stock}" value="${x.qty}" onchange="setQty(${x.id},this.value)"></div>
+ <strong>${money(p.price*x.qty)}</strong><button class="danger" onclick="removeCart(${x.id})">Remove</button></div>`;
+ }).join(""):"<div class='panel'><p>Your cart is empty.</p><button onclick=\"showPage('shop')\">Continue Shopping</button></div>";
+ const has=valid.length>0;
+ document.getElementById("cartSummary").classList.toggle("hidden",!has);
+ if(has){const c=calculate();document.getElementById("subtotal").textContent=money(c.subtotal);document.getElementById("discount").textContent="-"+money(c.discount);document.getElementById("delivery").textContent=money(c.delivery);document.getElementById("total").textContent=money(c.total);}
+ document.getElementById("checkoutTotal").textContent=money(calculate().total);
+}
+function applyPromo(){
+ const code=document.getElementById("promo").value.trim().toUpperCase();
+ if(code==="TECH10"){appliedPromo=true;notify("TECH10 applied: 10% off.");}
+ else{appliedPromo=false;notify("Invalid promo code. Try TECH10.");}
+ renderCart();
+}
+function toggleWishlist(id){
+ wishlist=wishlist.includes(id)?wishlist.filter(x=>x!==id):[...wishlist,id];
+ save();renderShop();renderWishlist();notify("Wishlist updated.");
+}
+function renderWishlist(){
+ document.getElementById("wishlistItems").innerHTML=wishlist.map(id=>productById(id)).filter(Boolean).map(productCard).join("")||"<p>Your wishlist is empty.</p>";
+}
+function checkoutPrefill(){
+ const c=customers.find(x=>x.email===currentEmail);
+ if(c){document.getElementById("cName").value=c.name;document.getElementById("cEmail").value=c.email;document.getElementById("cPhone").value=c.phone||"";}
+}
+document.getElementById("checkoutForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(!cart.length){notify("Your cart is empty.");showPage("shop");return;}
+ for(const item of cart){const p=productById(item.id);if(!p||p.stock<item.qty){notify("Stock changed for a product. Review your cart.");showPage("cart");return;}}
+ const c=calculate();
+ const order={
+ id:"TS"+Date.now(),name:document.getElementById("cName").value.trim(),
+ email:document.getElementById("cEmail").value.trim().toLowerCase(),
+ phone:document.getElementById("cPhone").value.trim(),
+ city:document.getElementById("cCity").value.trim(),
+ address:document.getElementById("cAddress").value.trim(),
+ payment:document.getElementById("payment").value,
+ items:cart.map(x=>{const p=productById(x.id);return {id:p.id,name:p.name,price:p.price,qty:x.qty};}),
+ subtotal:c.subtotal,discount:c.discount,delivery:c.delivery,total:c.total,
+ status:"Order Placed",date:new Date().toLocaleString()
+ };
+ cart.forEach(x=>{const p=productById(x.id);if(p)p.stock-=x.qty;});
+ orders.unshift(order);
+ let customer=customers.find(x=>x.email===order.email);
+ if(customer){customer.name=order.name;customer.phone=order.phone;customer.city=order.city;customer.address=order.address;}
+ else customers.push({name:order.name,email:order.email,phone:order.phone,city:order.city,address:order.address,password:""});
+ currentEmail=order.email;cart=[];appliedPromo=false;save();updateCartCount();e.target.reset();
+ document.getElementById("orderEmail").value=order.email;renderShop();renderAdmin();renderOrders(order.email);
+ notify("Order placed successfully! Order ID: "+order.id);showPage("orders");
+});
+document.getElementById("orderLookup").addEventListener("submit",e=>{e.preventDefault();renderOrders(document.getElementById("orderEmail").value);});
+function renderOrders(email){
+ if(!email){document.getElementById("orderList").innerHTML="<p>Enter your checkout email to view orders.</p>";return;}
+ const list=orders.filter(o=>o.email===email.trim().toLowerCase());
+ document.getElementById("orderList").innerHTML=list.map(o=>`
+ <div class="card"><div class="row"><h3>Order ${esc(o.id)}</h3><span class="tag">${esc(o.status)}</span></div>
+ <p class="small">${esc(o.date)}</p><hr>
+ ${o.items.map(i=>`<p>${esc(i.name)} × ${i.qty} — ${money(i.price*i.qty)}</p>`).join("")}
+ <hr><p>Payment: ${esc(o.payment)}</p><p>Delivery to: ${esc(o.city)}</p><p>Total: <strong>${money(o.total)}</strong></p>
+ <p class="small">Shipping address: ${esc(o.address)}</p>
+ </div>`).join("")||"<p>No orders found for this email.</p>";
+}
+document.getElementById("registerForm").addEventListener("submit",e=>{
+ e.preventDefault();const email=document.getElementById("regEmail").value.trim().toLowerCase();
+ if(customers.some(c=>c.email===email)){notify("An account with this email already exists.");return;}
+ customers.push({name:document.getElementById("regName").value.trim(),email,phone:document.getElementById("regPhone").value.trim(),password:document.getElementById("regPassword").value});
+ currentEmail=email;save();e.target.reset();renderAccount();notify("Registration successful.");
+});
+document.getElementById("loginForm").addEventListener("submit",e=>{
+ e.preventDefault();const email=document.getElementById("loginEmail").value.trim().toLowerCase(),pw=document.getElementById("loginPassword").value;
+ const c=customers.find(x=>x.email===email&&x.password===pw);
+ if(!c){notify("Incorrect login details. Please register or check your credentials.");return;}
+ currentEmail=email;e.target.reset();renderAccount();notify("Login successful.");
+});
+function logout(){currentEmail="";renderAccount();notify("Logged out.");}
+function renderAccount(){
+ const c=customers.find(x=>x.email===currentEmail);
+ document.getElementById("sessionInfo").textContent=c?"Logged in as "+c.name+" ("+c.email+")":"You are browsing as a guest.";
+ const rec=Object.keys(browsing).sort((a,b)=>browsing[b]-browsing[a])[0];
+ const recommended=products.filter(p=>rec?p.category===rec:true).slice(0,4);
+ document.getElementById("recommendations").innerHTML=recommended.map(productCard).join("")||"<p>No recommendations yet.</p>";
+}
+document.getElementById("reviewForm").addEventListener("submit",e=>{
+ e.preventDefault();reviews.unshift({id:Date.now(),name:document.getElementById("reviewName").value.trim(),productId:Number(document.getElementById("reviewProduct").value),rating:Number(document.getElementById("rating").value),text:document.getElementById("reviewText").value.trim(),date:new Date().toLocaleDateString()});
+ save();e.target.reset();renderReviews();renderShop();notify("Thank you for your review.");
+});
+function renderReviews(){
+ document.getElementById("reviewProduct").innerHTML=products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");
+ document.getElementById("reviewList").innerHTML=reviews.map(r=>`<div class="card"><h3>${esc((productById(r.productId)||{}).name||"Product")}</h3><p>By ${esc(r.name)}</p><p style="color:#e0a000">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</p><p>${esc(r.text)}</p><p class="small">${esc(r.date)}</p></div>`).join("")||"<p>No reviews yet. Be the first to review a product!</p>";
+}
+
+// ADMIN FUNCTIONS
+document.getElementById("adminLoginForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(document.getElementById("adminPassword").value==="TECH123"){
+ adminOn=true;document.getElementById("adminLogin").classList.add("hidden");document.getElementById("adminPanel").classList.remove("hidden");renderAdmin();notify("Admin demo login successful.");
+ }else notify("Incorrect admin password.");
+});
+function adminLogout(){adminOn=false;document.getElementById("adminLogin").classList.remove("hidden");document.getElementById("adminPanel").classList.add("hidden");document.getElementById("adminPassword").value="";}
+document.getElementById("productForm").addEventListener("submit",e=>{
+ e.preventDefault();if(!adminOn)return;
+ const id=Number(document.getElementById("editId").value);
+ const data={name:document.getElementById("aName").value.trim(),category:document.getElementById("aCategory").value,subcategory:document.getElementById("aSubcategory").value.trim(),price:Number(document.getElementById("aPrice").value),stock:Number(document.getElementById("aStock").value),description:document.getElementById("aDescription").value.trim(),emoji:document.getElementById("aEmoji").value.trim()||"📦"};
+ if(id){const p=productById(id);if(p)Object.assign(p,data);notify("Product updated.");}
+ else{products.push({id:Date.now(),...data,popular:0});notify("New product added.");}
+ persist();resetProductForm();renderAdmin();renderShop();renderCategoryOptions();renderReviews();
+});
+function editProduct(id){
+ const p=productById(id);if(!p)return;
+ document.getElementById("editId").value=p.id;
+ document.getElementById("aName").value=p.name;
+ document.getElementById("aCategory").value=p.category;
+ document.getElementById("aSubcategory").value=p.subcategory;
+ document.getElementById("aPrice").value=p.price;
+ document.getElementById("aStock").value=p.stock;
+ document.getElementById("aDescription").value=p.description;
+ document.getElementById("aEmoji").value=p.emoji||"";
+ document.getElementById("productFormTitle").textContent="Edit Product";
+ document.getElementById("productForm").scrollIntoView({behavior:"smooth"});
+}
+function resetProductForm(){document.getElementById("productForm").reset();document.getElementById("editId").value="";document.getElementById("productFormTitle").textContent="Add New Product";}
+function deleteProduct(id){
+ if(!confirm("Remove this product from the catalogue?"))return;
+ products=products.filter(p=>p.id!==id);cart=cart.filter(p=>p.id!==id);wishlist=wishlist.filter(x=>x!==id);
+ save();renderAdmin();renderShop();renderCategoryOptions();renderReviews();updateCartCount();notify("Product removed.");
+}
+function updateOrderStatus(id,status){const o=orders.find(x=>x.id===id);if(o){o.status=status;save();renderAdmin();renderOrders(o.email);notify("Order status updated.");}}
+function renderAdmin(){
+ if(!adminOn)return;
+ document.getElementById("adminStats").innerHTML=`
+ <div class="card"><h3>Total Products</h3><p class="stat">${products.length}</p></div>
+ <div class="card"><h3>Total Orders</h3><p class="stat">${orders.length}</p></div>
+ <div class="card"><h3>Customers</h3><p class="stat">${customers.length}</p></div>
+ <div class="card"><h3>Sales Total</h3><p class="stat">${money(orders.reduce((n,o)=>n+o.total,0))}</p></div>`;
+ document.getElementById("adminProducts").innerHTML=`<table><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>${products.map(p=>`<tr><td>${esc(p.name)}<br><span class="small">${esc(p.description)}</span></td><td>${esc(p.category)} / ${esc(p.subcategory)}</td><td>${money(p.price)}</td><td>${p.stock}</td><td><button onclick="editProduct(${p.id})">Edit</button> <button class="danger" onclick="deleteProduct(${p.id})">Delete</button></td></tr>`).join("")}</table>`;
+ document.getElementById("adminOrders").innerHTML=orders.length?`<table><tr><th>Order ID</th><th>Customer</th><th>Contact</th><th>Address</th><th>Items</th><th>Total</th><th>Status</th></tr>${orders.map(o=>`<tr><td>${esc(o.id)}</td><td>${esc(o.name)}<br>${esc(o.email)}</td><td>${esc(o.phone)}</td><td>${esc(o.city)}<br>${esc(o.address)}</td><td>${o.items.map(i=>esc(i.name)+" × "+i.qty).join("<br>")}</td><td>${money(o.total)}</td><td><select onchange="updateOrderStatus('${esc(o.id)}',this.value)">${["Order Placed","Processing","Shipped","Delivered","Cancelled"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></td></tr>`).join("")}</table>`:"<p>No customer orders yet.</p>";
+ document.getElementById("adminCustomers").innerHTML=customers.length?`<table><tr><th>Name</th><th>Email</th><th>Phone</th><th>City</th><th>Orders</th></tr>${customers.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.email)}</td><td>${esc(c.phone)}</td><td>${esc(c.city)}</td><td>${orders.filter(o=>o.email===c.email).length}</td></tr>`).join("")}</table>`:"<p>No registered customers.</p>";
+ const avg=reviews.length?(reviews.reduce((n,r)=>n+r.rating,0)/reviews.length).toFixed(1):"N/A";
+ document.getElementById("adminReviews").innerHTML=`<p>Total reviews: <b>${reviews.length}</b></p><p>Average rating: <b>⭐ ${avg} / 5</b></p>`;
+}
+
+// INITIALIZATION
+renderCategoryOptions();
+renderShop();
+renderReviews();
+renderWishlist();
+renderCart();
+renderAccount();
+renderAdmin();
+updateCartCount();
+</script>
+</body>
+</html>

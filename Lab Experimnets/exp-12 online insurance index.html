@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InsureEasy - Insurance Management System</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#243047}
+header{background:#fff;padding:16px 6%;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px #0001;position:sticky;top:0;z-index:5}
+.logo{font-size:25px;font-weight:bold;color:#1455c0}
+nav a{margin:0 10px;text-decoration:none;color:#374151;font-weight:bold;font-size:14px}
+button{border:0;border-radius:7px;padding:11px 15px;background:#2563eb;color:white;cursor:pointer;font-weight:bold}
+button:hover{opacity:.88}
+.light{background:#e8efff;color:#2455b8}
+.red{background:#ffe9e9;color:#b42318}
+input,select,textarea{width:100%;padding:12px;border:1px solid #d5dce7;border-radius:7px;margin:6px 0 13px;font:inherit}
+label{font-size:13px;font-weight:bold;color:#536078}
+.hero{padding:65px 6%;display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center;background:linear-gradient(120deg,#e5efff,#e5faf2)}
+.hero h1{font-size:48px;color:#132e58;margin:12px 0}
+.hero h1 span{color:#2563eb}
+.hero p{line-height:1.8;color:#59677e;font-size:16px}
+.hero img{width:100%;height:310px;object-fit:cover;border-radius:18px}
+section{padding:42px 6%}
+h2{color:#15325d;font-size:29px}
+.subtitle{color:#69768b;margin-top:-8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:25px}
+.stat{background:white;padding:22px;border-radius:12px;border:1px solid #e3e9f1}
+.stat strong{display:block;font-size:27px;color:#2563eb;margin-bottom:8px}
+.stat span{font-size:13px;color:#667085}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{background:white;border:1px solid #e2e8f0;border-radius:13px;padding:21px;box-shadow:0 4px 14px #00000008}
+.card h3{color:#183663;margin-top:10px}
+.card p{color:#667085;line-height:1.6;font-size:14px}
+.icon{font-size:32px}
+.price{font-size:23px;font-weight:bold;color:#2563eb}
+.badge{display:inline-block;background:#e5f7ed;color:#16804a;padding:6px 9px;border-radius:20px;font-size:11px;font-weight:bold}
+.tabs{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}
+.tabs button{background:#e8efff;color:#2455b8}
+.tabs button.active{background:#2455b8;color:white}
+.panel{background:white;padding:23px;border-radius:13px;border:1px solid #e2e8f0;margin:17px 0}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:12px;border-bottom:1px solid #e5e7eb}
+th{background:#f4f7fb;color:#475467}
+footer{background:#142b4d;color:white;padding:32px 6%;line-height:1.8}
+footer p{color:#d1dbea}
+.modal{display:none;position:fixed;inset:0;background:#0009;z-index:20;align-items:center;justify-content:center;padding:15px}
+.modalbox{background:white;padding:25px;border-radius:14px;width:min(520px,100%);max-height:90vh;overflow:auto}
+.close{float:right;background:#e8edf5;color:#243047;padding:7px 11px}
+.notice{background:#eef5ff;padding:14px;border-radius:8px;line-height:1.7;margin:12px 0}
+#toast{display:none;position:fixed;bottom:20px;right:20px;background:#142b4d;color:white;padding:15px 20px;border-radius:8px;z-index:30}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:850px){nav{display:none}.hero{grid-template-columns:1fr}.hero h1{font-size:38px}.grid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:550px){header{padding:14px 4%}.logo{font-size:20px}.hero{padding:35px 5%}.hero img{height:220px}section{padding:30px 5%}.grid,.stats,.formgrid{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo">🛡 InsureEasy</div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#policies">Policies</a>
+    <a href="#compare">Compare</a>
+    <a href="#dashboard">Dashboard</a>
+  </nav>
+  <button onclick="openLogin()">Login / Register</button>
+</header>
+
+<section class="hero" id="home">
+  <div>
+    <span class="badge">YOUR PROTECTION, SIMPLIFIED</span>
+    <h1>Insurance made <span>easy.</span></h1>
+    <p>Compare insurance plans, manage policies, track payments, submit claims and receive renewal reminders—all in one convenient platform.</p>
+    <div class="actions">
+      <button onclick="document.getElementById('policies').scrollIntoView()">Explore Policies</button>
+      <button class="light" onclick="openLogin()">Get Started</button>
+    </div>
+  </div>
+  <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1000&q=80" alt="Insurance planning">
+</section>
+
+<section>
+  <h2>Welcome to InsureEasy</h2>
+  <p class="subtitle">Manage your insurance in a simpler, smarter way.</p>
+  <div class="stats">
+    <div class="stat"><strong id="totalPolicies">6</strong><span>Available Plans</span></div>
+    <div class="stat"><strong id="totalCustomers">0</strong><span>Registered Customers</span></div>
+    <div class="stat"><strong id="totalAgents">0</strong><span>Registered Agents</span></div>
+    <div class="stat"><strong id="totalClaims">0</strong><span>Claims Submitted</span></div>
+  </div>
+</section>
+
+<section id="policies">
+  <h2>Explore Insurance Policies</h2>
+  <p class="subtitle">Choose a plan that fits your needs and budget.</p>
+  <div class="tabs">
+    <button class="active" onclick="filterPolicies('All',this)">All Plans</button>
+    <button onclick="filterPolicies('Health',this)">Health</button>
+    <button onclick="filterPolicies('Auto',this)">Auto</button>
+    <button onclick="filterPolicies('Home',this)">Home</button>
+    <button onclick="filterPolicies('Life',this)">Life</button>
+  </div>
+  <div class="grid" id="policyList"></div>
+</section>
+
+<section id="compare">
+  <h2>Compare Insurance Plans</h2>
+  <p class="subtitle">Compare premiums and coverage before choosing a plan.</p>
+  <div class="panel">
+    <div class="formgrid">
+      <div><label>First Policy</label><select id="compare1"></select></div>
+      <div><label>Second Policy</label><select id="compare2"></select></div>
+    </div>
+    <button onclick="comparePolicies()">Compare Plans</button>
+    <div id="compareResult"></div>
+  </div>
+</section>
+
+<section id="dashboard">
+  <h2>Insurance Dashboard</h2>
+  <p class="subtitle">Login to manage your policies, payments, claims and reminders.</p>
+  <div class="panel">
+    <h3 id="welcomeTitle">Welcome, Customer</h3>
+    <p id="loginStatus">Please login or register to access your account.</p>
+    <div class="tabs">
+      <button class="active" onclick="showTab('myPolicies',this)">My Policies</button>
+      <button onclick="showTab('myPayments',this)">Payments</button>
+      <button onclick="showTab('myClaims',this)">Claims</button>
+      <button onclick="showTab('myReminders',this)">Renewal Reminders</button>
+    </div>
+    <div id="myPolicies" class="dashboardTab">
+      <div id="customerPolicies">Login to view your policies.</div>
+      <div class="actions"><button onclick="showApplication()">Apply for Policy</button></div>
+    </div>
+    <div id="myPayments" class="dashboardTab" style="display:none">
+      <div id="paymentList">Login to view payment records.</div>
+      <p><small>Payment actions are simulated for this student project. No money is transferred.</small></p>
+    </div>
+    <div id="myClaims" class="dashboardTab" style="display:none">
+      <h3>Submit an Insurance Claim</h3>
+      <form onsubmit="submitClaim(event)">
+        <label>Policy</label><select id="claimPolicy" required></select>
+        <label>Claim Description</label><textarea id="claimDescription" required placeholder="Describe the incident or claim"></textarea>
+        <label>Claim Amount (₹)</label><input id="claimAmount" type="number" min="1" required>
+        <button>Submit Claim</button>
+      </form>
+      <div id="claimList"></div>
+    </div>
+    <div id="myReminders" class="dashboardTab" style="display:none">
+      <div id="reminderList">Login to view reminders.</div>
+      <div class="notice">This demo displays renewal reminders inside the website. Real SMS and email notifications require a server and messaging service.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>InsureEasy Services</h2>
+  <div class="grid">
+    <div class="card"><div class="icon">📋</div><h3>Policy Management</h3><p>View your insurance details, coverage, premium and policy status.</p></div>
+    <div class="card"><div class="icon">🔔</div><h3>Renewal Reminders</h3><p>Review upcoming premium due dates and renewal information.</p></div>
+    <div class="card"><div class="icon">🤝</div><h3>Agent Support</h3><p>Agents can register customers and help manage their policies.</p></div>
+    <div class="card"><div class="icon">📱</div><h3>SMS Alert Simulation</h3><p>Agents can create sample reminders for upcoming or overdue premiums.</p></div>
+    <div class="card"><div class="icon">💰</div><h3>Commission Tracking</h3><p>Managers can review sample agent commissions based on policy records.</p></div>
+    <div class="card"><div class="icon">🔐</div><h3>Role-Based Access</h3><p>Demo customer, agent, manager and administrator views.</p></div>
+  </div>
+</section>
+
+<section id="agentSection">
+  <h2>Agent & Manager Portal</h2>
+  <p class="subtitle">Agents can register, add customers, manage policies and send demo reminders.</p>
+  <div class="panel">
+    <h3>Agent Registration</h3>
+    <form onsubmit="registerAgent(event)">
+      <div class="formgrid">
+        <div><label>Agent Name</label><input id="agentName" required></div>
+        <div><label>Email</label><input id="agentEmail" type="email" required></div>
+        <div><label>Phone Number</label><input id="agentPhone" required></div>
+        <div><label>Agency / Company</label><input id="agentCompany" required></div>
+        <div><label>Username</label><input id="agentUsername" required></div>
+        <div><label>Password</label><input id="agentPassword" type="password" required></div>
+      </div>
+      <button>Register Agent</button>
+    </form>
+    <div id="agentRegistrationResult"></div>
+  </div>
+
+  <div class="panel">
+    <h3>Agent Login</h3>
+    <form onsubmit="agentLogin(event)">
+      <label>Agent Username</label><input id="agentLoginName" required>
+      <label>Password</label><input id="agentLoginPassword" type="password" required>
+      <button>Agent Login</button>
+    </form>
+    <div id="agentPortal" style="display:none">
+      <h3 id="agentWelcome"></h3>
+      <h3>Create Customer</h3>
+      <form onsubmit="createCustomer(event)">
+        <div class="formgrid">
+          <div><label>Customer Name</label><input id="customerName" required></div>
+          <div><label>Email</label><input id="customerEmail" type="email" required></div>
+          <div><label>Phone</label><input id="customerPhone" required></div>
+          <div><label>Customer Username</label><input id="customerUsername" required></div>
+          <div><label>Temporary Password</label><input id="customerPassword" required></div>
+        </div>
+        <button>Create Customer</button>
+      </form>
+
+      <h3>Manage Customer Policy</h3>
+      <form onsubmit="agentCreatePolicy(event)">
+        <label>Customer Username</label><select id="agentCustomerSelect" required></select>
+        <label>Insurance Plan</label><select id="agentPolicySelect" required></select>
+        <label>Premium Due Date</label><input id="agentDueDate" type="date" required>
+        <button>Assign Policy</button>
+      </form>
+
+      <h3>Send SMS Alert (Demo)</h3>
+      <form onsubmit="sendAlert(event)">
+        <label>Customer</label><select id="alertCustomer" required></select>
+        <label>Reminder Message</label><textarea id="alertMessage" required>Reminder: Your insurance premium is due soon. Please review your policy.</textarea>
+        <button>Send Demo Alert</button>
+      </form>
+      <div id="agentAlerts"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Administrator Portal</h2>
+  <p class="subtitle">Approve agent accounts, view agents, customers, policies and commission records.</p>
+  <div class="panel">
+    <h3>Admin Login</h3>
+    <p><small>Demo administrator password: ADMIN123</small></p>
+    <label>Admin Password</label><input id="adminPassword" type="password" placeholder="Enter admin password">
+    <button onclick="adminLogin()">Login as Admin</button>
+    <div id="adminPanel" style="display:none">
+      <div class="tabs">
+        <button onclick="adminView('adminAgents')">Agents</button>
+        <button onclick="adminView('adminCustomers')">Customers</button>
+        <button onclick="adminView('adminPolicies')">Policies</button>
+        <button onclick="adminView('adminCommissions')">Commissions</button>
+      </div>
+      <div id="adminAgents"></div>
+      <div id="adminCustomers" style="display:none"></div>
+      <div id="adminPolicies" style="display:none"></div>
+      <div id="adminCommissions" style="display:none"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <h2 style="color:white">🛡 InsureEasy</h2>
+  <p>Your insurance, organized in one place.</p>
+  <p>Student Project Demonstration | HTML, CSS and JavaScript</p>
+</footer>
+
+<!-- Login Modal -->
+<div class="modal" id="loginModal">
+  <div class="modalbox">
+    <button class="close" onclick="closeModal('loginModal')">✕</button>
+    <h2 id="authHeading">Customer Login</h2>
+    <div class="tabs">
+      <button onclick="authMode('login')" id="tabLogin">Login</button>
+      <button onclick="authMode('register')" id="tabRegister">Register</button>
+    </div>
+    <form onsubmit="customerAuth(event)">
+      <label>Full Name (registration only)</label><input id="authFullName" placeholder="Your name">
+      <label>Username</label><input id="authUsername" required>
+      <label>Password</label><input id="authPassword" type="password" required>
+      <label id="emailLabel">Email (registration only)</label><input id="authEmail" type="email">
+      <button id="authSubmit">Login</button>
+    </form>
+    <p><small>Demo accounts are stored in this browser only. Do not use real passwords.</small></p>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const defaultPlans=[
+{id:1,name:"Health Secure Basic",type:"Health",premium:6500,coverage:500000,term:"1 year",description:"Health coverage for eligible hospitalization expenses.",features:"Hospitalization, medical expenses, selected treatments"},
+{id:2,name:"Family Health Plus",type:"Health",premium:12500,coverage:1000000,term:"1 year",description:"A sample health plan designed for family protection.",features:"Family cover, hospitalization, selected medical expenses"},
+{id:3,name:"Auto Protect",type:"Auto",premium:8500,coverage:500000,term:"1 year",description:"A sample motor insurance policy for vehicle owners.",features:"Accident damage, theft subject to terms, third-party cover"},
+{id:4,name:"Home Shield",type:"Home",premium:4200,coverage:2500000,term:"1 year",description:"Sample protection for your home and eligible contents.",features:"Fire, selected natural events, home contents subject to terms"},
+{id:5,name:"Life Secure",type:"Life",premium:9800,coverage:2000000,term:"1 year",description:"A sample life protection plan for financial security.",features:"Life cover subject to policy conditions"},
+{id:6,name:"Premium Auto Plus",type:"Auto",premium:14500,coverage:1000000,term:"1 year",description:"An enhanced sample motor plan with broader illustrative cover.",features:"Own damage, theft subject to terms, third-party cover"}
+];
+function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+let plans=load("iePlans",defaultPlans),customers=load("ieCustomers",[]),agents=load("ieAgents",[]),policies=load("iePolicies",[]),claims=load("ieClaims",[]),alerts=load("ieAlerts",[]),payments=load("iePayments",[]),currentUser=load("ieCurrentUser",null),currentAgent=null,authType="login";
+function money(n){return "₹"+Number(n).toLocaleString("en-IN")}
+function notify(m){let t=document.getElementById("toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",2800)}
+function openModal(id){document.getElementById(id).style.display="flex"}
+function closeModal(id){document.getElementById(id).style.display="none"}
+function filterPolicies(type,b){document.querySelectorAll("#policies .tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderPlans(type)}
+function renderPlans(type="All"){let list=plans.filter(p=>type==="All"||p.type===type);document.getElementById("policyList").innerHTML=list.map(p=>`<div class="card"><div class="icon">${p.type==="Health"?"🏥":p.type==="Auto"?"🚗":p.type==="Home"?"🏠":"❤️"}</div><span class="badge">${p.type} Insurance</span><h3>${p.name}</h3><p>${p.description}</p><div class="price">${money(p.premium)} <small>/ year</small></div><p><b>Illustrative coverage:</b> ${money(p.coverage)}<br><b>Term:</b> ${p.term}</p><p>${p.features}</p><button onclick="applyPolicy(${p.id})">Apply Now</button></div>`).join("");document.getElementById("totalPolicies").textContent=plans.length;fillPolicySelects()}
+function fillPolicySelects(){["compare1","compare2","claimPolicy","agentPolicySelect"].forEach(id=>{let el=document.getElementById(id);if(el)el.innerHTML=plans.map(p=>`<option value="${p.id}">${p.name}</option>`).join("")})}
+function comparePolicies(){let a=plans.find(p=>p.id===Number(document.getElementById("compare1").value)),b=plans.find(p=>p.id===Number(document.getElementById("compare2").value));if(!a||!b)return;document.getElementById("compareResult").innerHTML=`<div class="tablewrap"><table><tr><th>Feature</th><th>${a.name}</th><th>${b.name}</th></tr><tr><td>Insurance Type</td><td>${a.type}</td><td>${b.type}</td></tr><tr><td>Annual Premium</td><td>${money(a.premium)}</td><td>${money(b.premium)}</td></tr><tr><td>Coverage</td><td>${money(a.coverage)}</td><td>${money(b.coverage)}</td></tr><tr><td>Term</td><td>${a.term}</td><td>${b.term}</td></tr><tr><td>Features</td><td>${a.features}</td><td>${b.features}</td></tr></table></div>`}
+function openLogin(){if(currentUser){if(confirm("Log out from "+currentUser.username+"?")){currentUser=null;save("ieCurrentUser",null);renderDashboard();notify("Logged out.")}return}authMode("login");openModal("loginModal")}
+function authMode(m){authType=m;document.getElementById("authHeading").textContent=m==="login"?"Customer Login":"Create Customer Account";document.getElementById("authSubmit").textContent=m==="login"?"Login":"Register";document.getElementById("authFullName").required=m==="register";document.getElementById("authEmail").required=m==="register";document.getElementById("tabLogin").classList.toggle("active",m==="login");document.getElementById("tabRegister").classList.toggle("active",m==="register")}
+function customerAuth(e){e.preventDefault();let u=document.getElementById("authUsername").value.trim(),pw=document.getElementById("authPassword").value;if(authType==="register"){if(customers.some(c=>c.username.toLowerCase()===u.toLowerCase())){notify("Username already exists.");return}customers.push({id:Date.now(),name:document.getElementById("authFullName").value,username:u,password:pw,email:document.getElementById("authEmail").value,phone:"",createdBy:"Self"});save("ieCustomers",customers);currentUser={username:u,name:document.getElementById("authFullName").value,role:"Customer"};save("ieCurrentUser",currentUser);notify("Account registered successfully.")}else{let c=customers.find(c=>c.username.toLowerCase()===u.toLowerCase()&&c.password===pw);if(!c){notify("Login failed. Please register first.");return}currentUser={username:c.username,name:c.name,role:"Customer"};save("ieCurrentUser",currentUser);notify("Login successful.")}closeModal("loginModal");renderDashboard()}
+function applyPolicy(id){if(!currentUser){notify("Please login before applying.");openLogin();return}let p=plans.find(x=>x.id===id);if(!confirm("Apply for "+p.name+" with annual premium "+money(p.premium)+"?"))return;policies.push({id:Date.now(),customer:currentUser.username,planId:id,planName:p.name,premium:p.premium,coverage:p.coverage,dueDate:new Date(Date.now()+365*86400000).toISOString().split("T")[0],status:"Pending Review",agent:"Self",commission:Math.round(p.premium*.1)});save("iePolicies",policies);renderDashboard();notify("Policy application submitted.") }
+function showApplication(){document.getElementById("policies").scrollIntoView({behavior:"smooth"})}
+function showTab(id,b){document.querySelectorAll(".dashboardTab").forEach(x=>x.style.display="none");document.getElementById(id).style.display="block";document.querySelectorAll("#dashboard .tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active")}
+function renderDashboard(){document.querySelector("header button").textContent=currentUser?currentUser.username+" / Logout":"Login / Register";document.getElementById("welcomeTitle").textContent=currentUser?"Welcome, "+currentUser.name:"Welcome, Customer";document.getElementById("loginStatus").textContent=currentUser?"Signed in as "+currentUser.username+".":"Please login or register to access your account.";document.getElementById("totalCustomers").textContent=customers.length;document.getElementById("totalAgents").textContent=agents.length;document.getElementById("totalClaims").textContent=claims.length;let mine=policies.filter(p=>currentUser&&p.customer===currentUser.username);document.getElementById("customerPolicies").innerHTML=mine.length?mine.map(p=>`<div class="panel"><b>${p.planName}</b><p>Premium: ${money(p.premium)} / year<br>Coverage: ${money(p.coverage)}<br>Due date: ${p.dueDate}<br>Status: <span class="badge">${p.status}</span></p><button class="light" onclick="payPremium(${p.id})">Pay Premium (Demo)</button></div>`).join(""):"No policies yet. Login and apply for a plan.";let pm=payments.filter(p=>currentUser&&p.customer===currentUser.username);document.getElementById("paymentList").innerHTML=pm.length?pm.map(p=>`<div class="panel">${p.planName} — ${money(p.amount)} — ${p.date} — ${p.status}</div>`).join(""):"No payments recorded.";let cl=claims.filter(c=>currentUser&&c.customer===currentUser.username);document.getElementById("claimList").innerHTML=cl.map(c=>`<div class="panel">Claim #${c.id}: ${c.planName}<br>Amount: ${money(c.amount)}<br>Status: ${c.status}<p>${c.description}</p></div>`).join("")||"No claims submitted.";let al=alerts.filter(a=>currentUser&&a.customer===currentUser.username);document.getElementById("reminderList").innerHTML=al.length?al.map(a=>`<div class="panel"><b>${a.date}</b><p>${a.message}</p><small>From agent: ${a.agent}</small></div>`).join(""):mine.map(p=>`<div class="panel"><b>${p.planName}</b><p>Premium due date: ${p.dueDate}</p><small>Reminder shown as a demo only.</small></div>`).join("")||"No reminders available.";updateAgentSelects()}
+function payPremium(id){let p=policies.find(x=>x.id===id);if(!confirm("Simulate premium payment of "+money(p.premium)+"? No real payment will be made."))return;payments.push({id:Date.now(),customer:p.customer,planName:p.planName,amount:p.premium,date:new Date().toLocaleDateString(),status:"Demo payment recorded"});p.status="Active (Demo)";save("iePayments",payments);save("iePolicies",policies);renderDashboard();notify("Demo payment recorded.")}
+function submitClaim(e){e.preventDefault();if(!currentUser){notify("Please login first.");openLogin();return}let p=policies.find(p=>p.id===Number(document.getElementById("claimPolicy").value)&&p.customer===currentUser.username);if(!p){notify("Apply for a policy before submitting a claim.");return}claims.push({id:Date.now(),customer:currentUser.username,planName:p.planName,description:document.getElementById("claimDescription").value,amount:Number(document.getElementById("claimAmount").value),status:"Submitted for Review"});save("ieClaims",claims);save("iePolicies",policies);renderDashboard();e.target.reset();notify("Claim submitted in demo system.")}
+function registerAgent(e){e.preventDefault();let username=document.getElementById("agentUsername").value.trim();if(agents.some(a=>a.username.toLowerCase()===username.toLowerCase())){notify("Agent username already exists.");return}agents.push({id:Date.now(),name:document.getElementById("agentName").value,email:document.getElementById("agentEmail").value,phone:document.getElementById("agentPhone").value,company:document.getElementById("agentCompany").value,username,password:document.getElementById("agentPassword").value,approved:false});save("ieAgents",agents);document.getElementById("agentRegistrationResult").innerHTML='<div class="notice">Agent registration submitted. Admin approval is required before managing customers.</div>';e.target.reset();updateAgentSelects();renderDashboard();notify("Agent registration submitted.")}
+function agentLogin(e){e.preventDefault();let u=document.getElementById("agentLoginName").value,p=document.getElementById("agentLoginPassword").value;currentAgent=agents.find(a=>a.username===u&&a.password===p);if(!currentAgent){notify("Agent login failed.");return}if(!currentAgent.approved){notify("Your agent account is waiting for admin approval.");return}document.getElementById("agentPortal").style.display="block";document.getElementById("agentWelcome").textContent="Welcome, "+currentAgent.name;updateAgentSelects();renderAgentAlerts();notify("Agent login successful.")}
+function createCustomer(e){e.preventDefault();let u=document.getElementById("customerUsername").value.trim();if(customers.some(c=>c.username.toLowerCase()===u.toLowerCase())){notify("Customer username already exists.");return}customers.push({id:Date.now(),name:document.getElementById("customerName").value,email:document.getElementById("customerEmail").value,phone:document.getElementById("customerPhone").value,username:u,password:document.getElementById("customerPassword").value,createdBy:currentAgent.username});save("ieCustomers",customers);e.target.reset();updateAgentSelects();renderDashboard();notify("Customer created successfully.")}
+function updateAgentSelects(){["agentCustomerSelect","alertCustomer"].forEach(id=>{let el=document.getElementById(id);if(el)el.innerHTML=customers.map(c=>`<option value="${c.username}">${c.name} (${c.username})</option>`).join("")});}
+function agentCreatePolicy(e){e.preventDefault();if(!currentAgent)return;let c=document.getElementById("agentCustomerSelect").value,p=plans.find(x=>x.id===Number(document.getElementById("agentPolicySelect").value));if(!c||!p){notify("Create a customer first.");return}policies.push({id:Date.now(),customer:c,planId:p.id,planName:p.name,premium:p.premium,coverage:p.coverage,dueDate:document.getElementById("agentDueDate").value,status:"Active (Demo)",agent:currentAgent.username,commission:Math.round(p.premium*.1)});save("iePolicies",policies);renderDashboard();notify("Policy assigned to customer.")}
+function sendAlert(e){e.preventDefault();if(!currentAgent)return;let c=document.getElementById("alertCustomer").value;alerts.push({id:Date.now(),customer:c,message:document.getElementById("alertMessage").value,date:new Date().toLocaleDateString(),agent:currentAgent.username});save("ieAlerts",alerts);renderDashboard();renderAgentAlerts();notify("Demo alert recorded. No SMS was sent.")}
+function renderAgentAlerts(){document.getElementById("agentAlerts").innerHTML=alerts.filter(a=>currentAgent&&a.agent===currentAgent.username).map(a=>`<div class="notice">Customer: ${a.customer}<br>${a.message}<br><small>${a.date} — Demo alert</small></div>`).join("")||"No alerts sent yet."}
+function adminLogin(){if(document.getElementById("adminPassword").value!=="ADMIN123"){notify("Incorrect admin password.");return}document.getElementById("adminPanel").style.display="block";renderAdmin();notify("Admin login successful.")}
+function adminView(id){["adminAgents","adminCustomers","adminPolicies","adminCommissions"].forEach(x=>document.getElementById(x).style.display=x===id?"block":"none")}
+function renderAdmin(){document.getElementById("adminAgents").innerHTML="<h3>Agent Approvals & Details</h3>"+(agents.map(a=>`<div class="panel"><b>${a.name}</b><p>${a.company}<br>${a.email}<br>${a.phone}<br>Username: ${a.username}<br>Status: ${a.approved?"Approved":"Pending approval"}</p>${a.approved?"<span class='badge'>Approved</span>":`<button onclick="approveAgent(${a.id})">Approve Agent</button>`}</div>`).join("")||"No agents registered.");document.getElementById("adminCustomers").innerHTML="<h3>Customer Details</h3>"+(customers.map(c=>`<div class="panel"><b>${c.name}</b><p>Username: ${c.username}<br>Email: ${c.email||"Not provided"}<br>Phone: ${c.phone||"Not provided"}<br>Created by: ${c.createdBy||"Self"}</p></div>`).join("")||"No customers.");document.getElementById("adminPolicies").innerHTML="<h3>All Policy Records</h3>"+(policies.map(p=>`<div class="panel">${p.planName}<p>Customer: ${p.customer}<br>Premium: ${money(p.premium)}<br>Due date: ${p.dueDate}<br>Status: ${p.status}</p></div>`).join("")||"No policies assigned.");document.getElementById("adminCommissions").innerHTML="<h3>Agent Commission Records</h3><div class='tablewrap'><table><tr><th>Agent</th><th>Customer</th><th>Policy</th><th>Commission</th></tr>"+(policies.filter(p=>p.agent!=="Self").map(p=>`<tr><td>${p.agent}</td><td>${p.customer}</td><td>${p.planName}</td><td>${money(p.commission||0)}</td></tr>`).join("")||"<tr><td colspan='4'>No commission records yet.</td></tr>")+"</table></div>"}
+function approveAgent(id){let a=agents.find(x=>x.id===id);if(a){a.approved=true;save("ieAgents",agents);renderAdmin();notify("Agent approved.");}}
+renderPlans();comparePolicies();renderDashboard();
+</script>
+</body>
+</html>

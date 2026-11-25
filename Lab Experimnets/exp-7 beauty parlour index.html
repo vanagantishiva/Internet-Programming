@@ -1,0 +1,542 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glow & Grace | Beauty Salon</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--pink:#c94f83;--dark:#352431;--light:#fff5f9;--border:#f0dce6}
+body{font-family:Arial,sans-serif;background:#fffafd;color:var(--dark);line-height:1.6}
+header{background:white;padding:16px 7%;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.logo{font-size:23px;font-weight:bold;color:var(--pink)}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+button,.btn{border:0;padding:10px 15px;border-radius:8px;cursor:pointer;font-weight:bold;background:var(--pink);color:white}
+button:hover,.btn:hover{opacity:.85}
+nav button{background:white;color:var(--dark);padding:8px}
+nav button:hover{background:var(--light);color:var(--pink)}
+.container{width:90%;max-width:1150px;margin:30px auto}
+.hero{background:linear-gradient(120deg,#fce3ee,#fff5f9);padding:45px 7%;border-radius:18px;display:flex;justify-content:space-between;align-items:center;gap:25px;flex-wrap:wrap}
+.hero h1{font-size:clamp(30px,5vw,48px);line-height:1.2;margin-bottom:14px}
+.hero p{max-width:560px;margin-bottom:20px}
+.hero-icon{font-size:100px}
+h2{margin-bottom:15px}
+section{margin:35px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.card,.panel{background:white;border:1px solid var(--border);border-radius:13px;padding:20px;box-shadow:0 4px 15px #56223b0b}
+.card .emoji{font-size:43px}
+.card h3{margin:8px 0}
+.price{color:var(--pink);font-weight:bold;font-size:19px;margin:10px 0}
+.small{font-size:13px;color:#796b75}
+form{display:grid;gap:13px}
+label{font-weight:bold;font-size:14px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #dfced7;border-radius:7px;background:white;font:inherit;color:var(--dark)}
+textarea{resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tag{display:inline-block;background:#fce3ee;color:#a42f66;padding:4px 9px;border-radius:20px;font-size:12px}
+.danger{background:#a93445}
+.secondary{background:#eee5eb;color:var(--dark)}
+.hidden{display:none!important}
+#notice{position:fixed;bottom:20px;right:20px;background:#352431;color:white;padding:14px 20px;border-radius:10px;display:none;z-index:30;max-width:85%}
+table{width:100%;border-collapse:collapse;min-width:600px}
+th,td{text-align:left;padding:11px;border-bottom:1px solid var(--border);font-size:14px}
+th{background:var(--light)}
+.table-wrap{overflow-x:auto}
+.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.day,.dayhead{padding:8px 2px;text-align:center;border-radius:7px;font-size:13px}
+.dayhead{font-weight:bold;background:var(--light)}
+.day{border:1px solid var(--border);min-height:65px;background:white;cursor:pointer}
+.day:hover{background:#fce3ee}
+.day.selected{background:#f5c7dc;border:2px solid var(--pink)}
+.day.muted{color:#c4b8bf}
+.day b{display:block}
+footer{text-align:center;padding:25px;background:#352431;color:white;margin-top:50px}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+@media(max-width:650px){header{position:static}.container{width:94%}.hero{padding:30px 22px}.hero-icon{font-size:65px}.two{grid-template-columns:1fr}nav{width:100%}nav button{font-size:12px;padding:7px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">✿ Glow & Grace</div>
+  <nav>
+    <button onclick="showPage('home')">Home</button>
+    <button onclick="showPage('book')">Book Appointment</button>
+    <button onclick="showPage('account')">My Account</button>
+    <button onclick="showPage('calendar')">Calendar</button>
+    <button onclick="showPage('feedback')">Feedback</button>
+    <button onclick="showPage('admin')">Admin</button>
+  </nav>
+</header>
+
+<main class="container">
+  <div id="home" class="page">
+    <div class="hero">
+      <div>
+        <span class="tag">YOUR BEAUTY, OUR PASSION</span>
+        <h1>Feel beautiful.<br>Feel confident.</h1>
+        <p>Discover beauty services, choose your favourite stylist, and reserve an appointment at a time that suits you.</p>
+        <button onclick="showPage('book')">Book Your Appointment</button>
+      </div>
+      <div class="hero-icon">💇🏻‍♀️ 💅</div>
+    </div>
+
+    <section>
+      <h2>Our Popular Services</h2>
+      <div class="grid" id="serviceCards"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Meet Our Stylists</h2>
+      <div class="grid" id="stylistCards"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Why Choose Us?</h2>
+      <div class="grid">
+        <div><h3>📅 Easy Booking</h3><p>Choose a date and available time slot.</p></div>
+        <div><h3>✨ Expert Stylists</h3><p>Find a stylist for your preferred service.</p></div>
+        <div><h3>🔔 Booking Updates</h3><p>View your appointment status from your account.</p></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="book" class="page hidden">
+    <h2>Book an Appointment</h2>
+    <div class="panel">
+      <p class="small">Enter your details to reserve a slot. Demo bookings are stored in this browser.</p>
+      <form id="bookingForm">
+        <div class="two">
+          <div><label for="customer">Full Name</label><input id="customer" required placeholder="Your name"></div>
+          <div><label for="email">Email Address</label><input id="email" type="email" required placeholder="you@example.com"></div>
+        </div>
+        <div class="two">
+          <div><label for="phone">Phone Number</label><input id="phone" required type="tel" placeholder="Your phone number"></div>
+          <div><label for="service">Beauty Service</label><select id="service" required></select></div>
+        </div>
+        <div class="two">
+          <div><label for="stylist">Choose Stylist</label><select id="stylist" required></select></div>
+          <div><label for="date">Appointment Date</label><input id="date" type="date" required></div>
+        </div>
+        <div class="two">
+          <div><label for="time">Available Time</label><select id="time" required><option value="">Choose a date first</option></select></div>
+          <div><label for="payment">Payment Option</label>
+            <select id="payment"><option value="Full payment">Full payment (demo)</option><option value="Deposit">Partial deposit (demo)</option><option value="Pay at salon">Pay at salon</option></select>
+          </div>
+        </div>
+        <div><label for="notes">Additional Requests</label><textarea id="notes" rows="3" placeholder="Any preferences or requests?"></textarea></div>
+        <div class="panel" style="background:var(--light)">
+          <div class="row"><span>Service price</span><strong id="priceDisplay">₹0</strong></div>
+          <div class="row"><span>Amount due now (demo)</span><strong id="dueDisplay">₹0</strong></div>
+          <p class="small">No real payment is processed. This demo does not connect to Stripe or PayPal.</p>
+        </div>
+        <button type="submit">Confirm Appointment</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="account" class="page hidden">
+    <h2>My Account & Reservations</h2>
+    <div class="panel">
+      <form id="accountForm">
+        <label for="accountEmail">Enter the email used for booking</label>
+        <input id="accountEmail" type="email" required placeholder="you@example.com">
+        <button type="submit">View My Appointments</button>
+      </form>
+      <p class="small">For this classroom demo, email is used to find bookings; it is not secure account authentication.</p>
+    </div>
+    <section><h2>Upcoming Appointments</h2><div id="upcoming"></div></section>
+    <section><h2>Reservation History</h2><div id="history"></div></section>
+  </div>
+
+  <div id="calendar" class="page hidden">
+    <h2>Reservations Calendar</h2>
+    <div class="panel">
+      <div class="row">
+        <button class="secondary" onclick="changeMonth(-1)">← Previous</button>
+        <h3 id="monthLabel"></h3>
+        <button class="secondary" onclick="changeMonth(1)">Next →</button>
+      </div>
+      <div class="calendar" id="calendarGrid" style="margin-top:18px"></div>
+      <hr>
+      <h3 id="dayLabel">Select a date</h3>
+      <div id="dayDetails"></div>
+      <p class="small">Select a date to see reservations. Salon managers can lock or unlock all appointment slots for a date.</p>
+      <div class="two" style="margin-top:15px">
+        <button onclick="lockSelectedDate(true)">Lock Date (Unavailable)</button>
+        <button class="secondary" onclick="lockSelectedDate(false)">Unlock Date</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="feedback" class="page hidden">
+    <h2>Customer Feedback</h2>
+    <div class="panel">
+      <form id="feedbackForm">
+        <label for="feedbackName">Your Name</label><input id="feedbackName" required>
+        <label for="rating">Rating</label>
+        <select id="rating"><option value="5">★★★★★ - Excellent</option><option value="4">★★★★ - Very good</option><option value="3">★★★ - Good</option><option value="2">★★ - Fair</option><option value="1">★ - Poor</option></select>
+        <label for="feedbackText">Your Feedback</label><textarea id="feedbackText" required rows="4" placeholder="Tell us about your experience"></textarea>
+        <button type="submit">Submit Feedback</button>
+      </form>
+    </div>
+    <section><h2>Customer Reviews</h2><div id="reviews" class="grid"></div></section>
+  </div>
+
+  <div id="admin" class="page hidden">
+    <h2>Salon Manager Panel</h2>
+    <div class="panel" id="adminLogin">
+      <p>Sign in to manage services, reservations, and unavailable dates.</p>
+      <form id="adminLoginForm">
+        <label for="adminPassword">Demo Admin Password</label>
+        <input id="adminPassword" type="password" required placeholder="Enter admin password">
+        <button type="submit">Login as Admin</button>
+      </form>
+      <p class="small">Demonstration password: <strong>ADMIN123</strong>. Do not use this pattern for a real website.</p>
+    </div>
+
+    <div id="adminPanel" class="hidden">
+      <div class="row">
+        <h3>All Reservations</h3>
+        <button class="secondary" onclick="exportBookings()">Export CSV</button>
+      </div>
+      <div id="adminBookings" class="table-wrap"></div>
+      <hr>
+      <h3>Add a Service</h3>
+      <form id="serviceForm" class="panel">
+        <label for="newService">Service Name</label><input id="newService" required>
+        <div class="two">
+          <div><label for="newPrice">Price (₹)</label><input id="newPrice" type="number" min="1" required></div>
+          <div><label for="newDuration">Duration (minutes)</label><input id="newDuration" type="number" min="15" step="15" value="30" required></div>
+        </div>
+        <button type="submit">Add Service</button>
+      </form>
+      <hr>
+      <h3>Manage Services</h3>
+      <div id="adminServices" class="grid"></div>
+      <hr>
+      <h3>Manager Quick Booking</h3>
+      <form id="managerForm" class="panel">
+        <label for="managerCustomer">Customer Name</label><input id="managerCustomer" required>
+        <label for="managerEmail">Customer Email</label><input id="managerEmail" type="email" required>
+        <label for="managerPhone">Phone</label><input id="managerPhone" required>
+        <label for="managerService">Service</label><select id="managerService"></select>
+        <label for="managerStylist">Stylist</label><select id="managerStylist"></select>
+        <div class="two">
+          <div><label for="managerDate">Date</label><input id="managerDate" type="date" required></div>
+          <div><label for="managerTime">Time</label><select id="managerTime" required></select></div>
+        </div>
+        <button type="submit">Create Reservation</button>
+      </form>
+      <button class="danger" onclick="adminLogout()">Logout Admin</button>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 Glow & Grace Beauty Salon | Online Appointment Booking System</footer>
+<div id="notice"></div>
+
+<script>
+const defaultServices = [
+ {id:1,name:"Haircut & Styling",price:500,duration:45,emoji:"💇"},
+ {id:2,name:"Facial Treatment",price:800,duration:60,emoji:"🧖"},
+ {id:3,name:"Manicure",price:400,duration:30,emoji:"💅"},
+ {id:4,name:"Pedicure",price:500,duration:45,emoji:"🦶"},
+ {id:5,name:"Hair Coloring",price:1500,duration:90,emoji:"🎨"},
+ {id:6,name:"Bridal Makeup",price:3500,duration:120,emoji:"💄"}
+];
+const stylists = ["Ananya","Priya","Meera","Kavya"];
+const slots = ["09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"];
+let services = load("gg_services",defaultServices);
+let bookings = load("gg_bookings",[]);
+let lockedDates = load("gg_locked",[]);
+let reviews = load("gg_reviews",[]);
+let selectedEmail = "";
+let adminLoggedIn = false;
+let calendarMonth = new Date();
+let selectedDay = todayString();
+
+function load(key,fallback){
+ try { const value=localStorage.getItem(key); return value?JSON.parse(value):JSON.parse(JSON.stringify(fallback)); }
+ catch(e){return JSON.parse(JSON.stringify(fallback));}
+}
+function saveAll(){
+ try{
+ localStorage.setItem("gg_services",JSON.stringify(services));
+ localStorage.setItem("gg_bookings",JSON.stringify(bookings));
+ localStorage.setItem("gg_locked",JSON.stringify(lockedDates));
+ localStorage.setItem("gg_reviews",JSON.stringify(reviews));
+ }catch(e){toast("Unable to save. Browser storage may be full.");}
+}
+function esc(s){
+ return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function todayString(){
+ const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function toast(msg){
+ const n=document.getElementById("notice");n.textContent=msg;n.style.display="block";
+ setTimeout(()=>n.style.display="none",3000);
+}
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+ if(id==="calendar")renderCalendar();
+ if(id==="feedback")renderReviews();
+ if(id==="admin"&&adminLoggedIn)renderAdmin();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function serviceById(id){return services.find(s=>s.id===Number(id));}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN");}
+function renderServices(){
+ document.getElementById("serviceCards").innerHTML=services.map(s=>`
+ <div class="card"><div class="emoji">${esc(s.emoji||"✨")}</div><h3>${esc(s.name)}</h3>
+ <p>${s.duration} minutes</p><div class="price">${money(s.price)}</div>
+ <button onclick="startBooking(${s.id})">Book Now</button></div>`).join("");
+ const opts=services.map(s=>`<option value="${s.id}">${esc(s.name)} — ${money(s.price)}</option>`).join("");
+ ["service","managerService"].forEach(id=>document.getElementById(id).innerHTML=opts);
+}
+function renderStylists(){
+ document.getElementById("stylistCards").innerHTML=stylists.map((s,i)=>`
+ <div class="card"><div class="emoji">${["👩🏻‍🦰","👩🏽‍🦱","👩🏻","👩🏾‍🦱"][i]}</div>
+ <h3>${s}</h3><p>Professional beauty stylist</p><p class="small">Hair, beauty and personal care</p></div>`).join("");
+ const opts=stylists.map(s=>`<option value="${s}">${s}</option>`).join("");
+ ["stylist","managerStylist"].forEach(id=>document.getElementById(id).innerHTML=opts);
+}
+function startBooking(id){
+ showPage("book");document.getElementById("service").value=id;updatePrice();
+}
+function updatePrice(){
+ const s=serviceById(document.getElementById("service").value);
+ const price=s?s.price:0;
+ document.getElementById("priceDisplay").textContent=money(price);
+ document.getElementById("dueDisplay").textContent=money(document.getElementById("payment").value==="Deposit"?Math.ceil(price*.25):document.getElementById("payment").value==="Pay at salon"?0:price);
+}
+function slotOptions(date,stylist,excludeId=null){
+ const sel=document.getElementById("time");
+ if(!date){sel.innerHTML='<option value="">Choose a date first</option>';return;}
+ if(date<todayString()){sel.innerHTML='<option value="">Choose a future date</option>';return;}
+ if(lockedDates.includes(date)){sel.innerHTML='<option value="">This date is unavailable</option>';return;}
+ const available=slots.filter(t=>!bookings.some(b=>b.date===date&&b.time===t&&b.stylist===stylist&&b.status!=="Cancelled"&&b.id!==excludeId));
+ sel.innerHTML='<option value="">Choose time</option>'+available.map(t=>`<option value="${t}">${t}</option>`).join("");
+ if(!available.length)sel.innerHTML='<option value="">No slots available</option>';
+}
+function updateSlots(){
+ slotOptions(document.getElementById("date").value,document.getElementById("stylist").value);
+}
+function validSlot(date,time,stylist,excludeId=null){
+ return date>=todayString()&&!lockedDates.includes(date)&&slots.includes(time)&&
+ !bookings.some(b=>b.date===date&&b.time===time&&b.stylist===stylist&&b.status!=="Cancelled"&&b.id!==excludeId);
+}
+document.getElementById("service").addEventListener("change",updatePrice);
+document.getElementById("payment").addEventListener("change",updatePrice);
+document.getElementById("date").min=todayString();
+document.getElementById("date").addEventListener("change",updateSlots);
+document.getElementById("stylist").addEventListener("change",updateSlots);
+
+function createBooking(data){
+ if(!validSlot(data.date,data.time,data.stylist)){
+ toast("That time is unavailable. Please choose another slot.");return false;
+ }
+ const s=serviceById(data.serviceId);
+ if(!s){toast("Please choose a valid service.");return false;}
+ const booking={
+ id:Date.now()+Math.floor(Math.random()*1000),...data,
+ serviceName:s.name,price:s.price,status:"Confirmed",
+ created:new Date().toISOString()
+ };
+ bookings.push(booking);saveAll();
+ toast("Appointment confirmed! Booking ID: "+booking.id);
+ return true;
+}
+document.getElementById("bookingForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const data={
+ customer:document.getElementById("customer").value.trim(),
+ email:document.getElementById("email").value.trim().toLowerCase(),
+ phone:document.getElementById("phone").value.trim(),
+ serviceId:Number(document.getElementById("service").value),
+ stylist:document.getElementById("stylist").value,
+ date:document.getElementById("date").value,
+ time:document.getElementById("time").value,
+ payment:document.getElementById("payment").value,
+ notes:document.getElementById("notes").value.trim()
+ };
+ if(!data.time){toast("Please choose an available time.");return;}
+ if(createBooking(data)){
+ e.target.reset();document.getElementById("date").min=todayString();
+ updatePrice();updateSlots();
+ selectedEmail=data.email;
+ document.getElementById("accountEmail").value=data.email;
+ showPage("account");renderAccount();
+ }
+});
+
+document.getElementById("accountForm").addEventListener("submit",e=>{
+ e.preventDefault();selectedEmail=document.getElementById("accountEmail").value.trim().toLowerCase();renderAccount();
+});
+function bookingCard(b){
+ return `<div class="card">
+ <div class="row"><span class="tag">${esc(b.status)}</span><span class="small">ID: ${b.id}</span></div>
+ <h3>${esc(b.serviceName)}</h3><p>📅 ${esc(b.date)} at ${esc(b.time)}</p>
+ <p>Stylist: ${esc(b.stylist)}</p><p>Price: <strong>${money(b.price)}</strong></p>
+ <p class="small">Payment: ${esc(b.payment)}</p>
+ ${b.status!=="Cancelled"&&b.status!=="Completed"?`
+ <button onclick="reschedule(${b.id})">Reschedule</button>
+ <button class="danger" onclick="cancelBooking(${b.id})">Cancel</button>`:""}
+ </div>`;
+}
+function renderAccount(){
+ if(!selectedEmail){return;}
+ const mine=bookings.filter(b=>b.email===selectedEmail).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ const upcoming=mine.filter(b=>b.status!=="Cancelled"&&b.status!=="Completed"&&b.date>=todayString());
+ const history=mine.filter(b=>!upcoming.includes(b));
+ document.getElementById("upcoming").innerHTML=upcoming.length?`<div class="grid">${upcoming.map(bookingCard).join("")}</div>`:"<p>No upcoming appointments found.</p>";
+ document.getElementById("history").innerHTML=history.length?`<div class="grid">${history.map(bookingCard).join("")}</div>`:"<p>No reservation history found.</p>";
+}
+function cancelBooking(id){
+ const b=bookings.find(x=>x.id===id);
+ if(!b||!confirm("Cancel this appointment?"))return;
+ b.status="Cancelled";saveAll();renderAccount();renderCalendar();renderAdmin();toast("Appointment cancelled.");
+}
+function reschedule(id){
+ const b=bookings.find(x=>x.id===id);if(!b)return;
+ const date=prompt("Enter new date (YYYY-MM-DD):",b.date);if(!date)return;
+ const stylist=prompt("Enter stylist name: "+stylists.join(", "),b.stylist);if(!stylists.includes(stylist)){toast("Invalid stylist.");return;}
+ const time=prompt("Enter new time: "+slots.join(", "),b.time);if(!time)return;
+ if(!validSlot(date,time,stylist,id)){toast("That date/time is unavailable.");return;}
+ b.date=date;b.time=time;b.stylist=stylist;b.status="Confirmed";saveAll();renderAccount();renderCalendar();toast("Appointment rescheduled.");
+}
+
+function renderCalendar(){
+ const year=calendarMonth.getFullYear(),month=calendarMonth.getMonth();
+ document.getElementById("monthLabel").textContent=calendarMonth.toLocaleString("en-IN",{month:"long",year:"numeric"});
+ const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate();
+ const names=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+ let html=names.map(n=>`<div class="dayhead">${n}</div>`).join("");
+ for(let i=0;i<first;i++)html+='<div class="day muted"></div>';
+ for(let d=1;d<=days;d++){
+ const date=year+"-"+String(month+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+ const count=bookings.filter(b=>b.date===date&&b.status!=="Cancelled").length;
+ html+=`<div class="day ${selectedDay===date?"selected":""}" onclick="selectCalendarDay('${date}')">
+ <b>${d}</b>${count?`<span class="tag">${count} booking${count>1?"s":""}</span>`:""}
+ ${lockedDates.includes(date)?'<span style="color:#a93445">Locked</span>':""}</div>`;
+ }
+ document.getElementById("calendarGrid").innerHTML=html;
+ showCalendarDetails();
+}
+function changeMonth(n){calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+n,1);renderCalendar();}
+function selectCalendarDay(date){selectedDay=date;renderCalendar();}
+function showCalendarDetails(){
+ document.getElementById("dayLabel").textContent="Reservations for "+selectedDay+(lockedDates.includes(selectedDay)?" — LOCKED":"");
+ const list=bookings.filter(b=>b.date===selectedDay&&b.status!=="Cancelled").sort((a,b)=>a.time.localeCompare(b.time));
+ document.getElementById("dayDetails").innerHTML=list.length?`<div class="table-wrap"><table><tr><th>Time</th><th>Customer</th><th>Service</th><th>Stylist</th><th>Status</th></tr>${list.map(b=>`<tr><td>${esc(b.time)}</td><td>${esc(b.customer)}</td><td>${esc(b.serviceName)}</td><td>${esc(b.stylist)}</td><td>${esc(b.status)}</td></tr>`).join("")}</table></div>`:"<p>No reservations for this date.</p>";
+}
+function lockSelectedDate(lock){
+ if(!selectedDay){toast("Select a date first.");return;}
+ if(lock&&!lockedDates.includes(selectedDay))lockedDates.push(selectedDay);
+ if(!lock)lockedDates=lockedDates.filter(d=>d!==selectedDay);
+ saveAll();renderCalendar();toast(lock?"Date marked unavailable.":"Date unlocked.");
+}
+
+document.getElementById("feedbackForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ reviews.unshift({name:document.getElementById("feedbackName").value.trim(),rating:Number(document.getElementById("rating").value),message:document.getElementById("feedbackText").value.trim(),date:todayString()});
+ saveAll();e.target.reset();renderReviews();toast("Thank you for your feedback!");
+});
+function renderReviews(){
+ document.getElementById("reviews").innerHTML=reviews.length?reviews.map(r=>`
+ <div class="card"><h3>${esc(r.name)}</h3><p style="color:#c94f83">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</p>
+ <p>${esc(r.message)}</p><p class="small">${esc(r.date)}</p></div>`).join(""):"<p>No feedback yet. Be the first to review us!</p>";
+}
+
+document.getElementById("adminLoginForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(document.getElementById("adminPassword").value==="ADMIN123"){
+ adminLoggedIn=true;document.getElementById("adminLogin").classList.add("hidden");document.getElementById("adminPanel").classList.remove("hidden");renderAdmin();toast("Admin demo login successful.");
+ }else toast("Incorrect password.");
+});
+function adminLogout(){adminLoggedIn=false;document.getElementById("adminLogin").classList.remove("hidden");document.getElementById("adminPanel").classList.add("hidden");document.getElementById("adminPassword").value="";}
+function renderAdmin(){
+ if(!adminLoggedIn)return;
+ document.getElementById("adminBookings").innerHTML=bookings.length?`<table><tr><th>ID</th><th>Customer</th><th>Service</th><th>Date/Time</th><th>Stylist</th><th>Status</th><th>Actions</th></tr>
+ ${bookings.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(b=>`
+ <tr><td>${b.id}</td><td>${esc(b.customer)}<br>${esc(b.phone)}<br>${esc(b.email)}</td>
+ <td>${esc(b.serviceName)}<br>${money(b.price)}</td><td>${esc(b.date)} ${esc(b.time)}</td><td>${esc(b.stylist)}</td>
+ <td><select onchange="changeStatus(${b.id},this.value)">
+ ${["Confirmed","Completed","Cancelled"].map(s=>`<option ${b.status===s?"selected":""}>${s}</option>`).join("")}</select></td>
+ <td><button class="secondary" onclick="adminReschedule(${b.id})">Edit</button>
+ <button onclick="contactCustomer('${encodeURIComponent(b.phone)}')">Contact</button></td></tr>`).join("")}</table>`:"<p>No reservations yet.</p>";
+ document.getElementById("adminServices").innerHTML=services.map(s=>`
+ <div class="card"><h3>${esc(s.name)}</h3><p>${money(s.price)} · ${s.duration} min</p>
+ <button class="secondary" onclick="editService(${s.id})">Edit</button>
+ <button class="danger" onclick="deleteService(${s.id})">Delete</button></div>`).join("");
+}
+function changeStatus(id,status){
+ const b=bookings.find(x=>x.id===id);if(!b)return;
+ b.status=status;saveAll();renderAdmin();renderCalendar();toast("Reservation status updated.");
+}
+function contactCustomer(phone){
+ const p=decodeURIComponent(phone);
+ if(confirm("Open SMS app for "+p+"?"))window.location.href="sms:"+p;
+}
+function adminReschedule(id){
+ const b=bookings.find(x=>x.id===id);if(!b)return;
+ const date=prompt("New date (YYYY-MM-DD):",b.date);if(!date)return;
+ const time=prompt("New time ("+slots.join(", ")+"):",b.time);if(!time)return;
+ const stylist=prompt("Stylist ("+stylists.join(", ")+"):",b.stylist);
+ if(!stylists.includes(stylist)||!validSlot(date,time,stylist,id)){toast("Invalid or unavailable appointment slot.");return;}
+ b.date=date;b.time=time;b.stylist=stylist;b.status="Confirmed";saveAll();renderAdmin();renderCalendar();toast("Reservation updated.");
+}
+document.getElementById("serviceForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ services.push({id:Date.now(),name:document.getElementById("newService").value.trim(),price:Number(document.getElementById("newPrice").value),duration:Number(document.getElementById("newDuration").value),emoji:"✨"});
+ saveAll();renderServices();renderAdmin();e.target.reset();toast("Service added.");
+});
+function editService(id){
+ const s=serviceById(id);if(!s)return;
+ const name=prompt("Service name:",s.name);if(name===null)return;
+ const price=Number(prompt("Price:",s.price));if(!name.trim()||!Number.isFinite(price)||price<=0){toast("Invalid service details.");return;}
+ const duration=Number(prompt("Duration in minutes:",s.duration));
+ if(!Number.isFinite(duration)||duration<15){toast("Invalid duration.");return;}
+ s.name=name.trim();s.price=price;s.duration=duration;
+ saveAll();renderServices();renderAdmin();toast("Service updated.");
+}
+function deleteService(id){
+ if(!confirm("Delete this service? Existing reservations will remain in history."))return;
+ services=services.filter(s=>s.id!==id);
+ saveAll();renderServices();renderAdmin();toast("Service deleted.");
+}
+function exportBookings(){
+ const header=["ID","Customer","Email","Phone","Service","Price","Date","Time","Stylist","Status","Payment"];
+ const rows=bookings.map(b=>[b.id,b.customer,b.email,b.phone,b.serviceName,b.price,b.date,b.time,b.stylist,b.status,b.payment]);
+ const csv=[header,...rows].map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="salon-reservations.csv";a.click();URL.revokeObjectURL(a.href);
+}
+document.getElementById("managerDate").min=todayString();
+document.getElementById("managerDate").addEventListener("change",managerSlots);
+document.getElementById("managerStylist").addEventListener("change",managerSlots);
+function managerSlots(){
+ const date=document.getElementById("managerDate").value,stylist=document.getElementById("managerStylist").value;
+ const sel=document.getElementById("managerTime");
+ if(!date||date<todayString()||lockedDates.includes(date)){sel.innerHTML='<option value="">Unavailable date</option>';return;}
+ const available=slots.filter(t=>!bookings.some(b=>b.date===date&&b.time===t&&b.stylist===stylist&&b.status!=="Cancelled"));
+ sel.innerHTML=available.map(t=>`<option value="${t}">${t}</option>`).join("")||'<option value="">No slots available</option>';
+}
+document.getElementById("managerForm").addEventListener("submit",e=>{
+ e.preventDefault();if(!adminLoggedIn)return;
+ const data={customer:document.getElementById("managerCustomer").value.trim(),email:document.getElementById("managerEmail").value.trim().toLowerCase(),phone:document.getElementById("managerPhone").value.trim(),serviceId:Number(document.getElementById("managerService").value),stylist:document.getElementById("managerStylist").value,date:document.getElementById("managerDate").value,time:document.getElementById("managerTime").value,payment:"Pay at salon",notes:"Manager-created booking"};
+ if(!data.time){toast("Choose an available time.");return;}
+ if(createBooking(data)){e.target.reset();managerSlots();renderAdmin();renderCalendar();}
+});
+
+// Initial page setup
+renderServices();
+renderStylists();
+updatePrice();
+renderReviews();
+renderCalendar();
+</script>
+</body>
+</html>

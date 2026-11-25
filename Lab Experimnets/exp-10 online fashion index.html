@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StyleHub | Fashion Store</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--pink:#bd4777;--dark:#302432;--light:#fff2f7;--border:#eedde5}
+body{font-family:Arial,sans-serif;background:#fffafd;color:var(--dark);line-height:1.6}
+header{background:white;padding:15px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
+.logo{font-size:26px;font-weight:bold;color:var(--pink)}
+nav{display:flex;gap:5px;flex-wrap:wrap}
+button,.btn{border:0;background:var(--pink);color:white;padding:10px 13px;border-radius:7px;cursor:pointer;font-weight:bold;text-decoration:none;display:inline-block}
+button:hover,.btn:hover{opacity:.85}
+nav button{background:white;color:var(--dark);padding:8px;font-size:13px}
+nav button:hover{background:var(--light)}
+.container{width:92%;max-width:1200px;margin:28px auto}
+.hidden{display:none!important}
+.hero{background:linear-gradient(120deg,#f8dce8,#fff4f8);padding:42px;border-radius:16px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.hero h1{font-size:clamp(32px,5vw,48px);line-height:1.2;margin:12px 0}
+.hero p{max-width:580px;margin-bottom:18px}
+.hero-icon{font-size:90px}
+section{margin:30px 0}
+h2{margin-bottom:16px}
+h3{margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.card,.panel{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:0 4px 15px #42233609}
+.product-icon{font-size:48px}
+.price{font-size:21px;font-weight:bold;color:var(--pink);margin:8px 0}
+.old{font-size:13px;text-decoration:line-through;color:#999}
+.small{font-size:13px;color:#81727b}
+.tag{display:inline-block;background:#f9e4ed;color:#a43164;padding:3px 9px;border-radius:20px;font-size:12px}
+form{display:grid;gap:12px}
+label{font-size:14px;font-weight:bold}
+input,select,textarea{width:100%;padding:11px;border:1px solid #ddcbd4;border-radius:7px;font:inherit;background:white;color:var(--dark)}
+textarea{resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.secondary{background:#eee7ec;color:var(--dark)}
+.danger{background:#bf3549}
+.product-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.product-actions button{flex:1}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{text-align:left;padding:11px;border-bottom:1px solid var(--border);font-size:13px}
+th{background:var(--light)}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+footer{margin-top:45px;padding:25px;background:var(--dark);color:white;text-align:center}
+#toast{display:none;position:fixed;bottom:20px;right:20px;background:var(--dark);color:white;padding:14px 20px;border-radius:9px;z-index:10;max-width:90%}
+@media(max-width:650px){header{position:static}.container{width:95%}.hero{padding:25px}.hero-icon{font-size:55px}.two{grid-template-columns:1fr}nav button{font-size:11px;padding:6px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">✿ StyleHub</div>
+ <nav>
+  <button onclick="page('home')">Home</button>
+  <button onclick="page('shop')">Shop</button>
+  <button onclick="page('cart')">Cart (<span id="cartCount">0</span>)</button>
+  <button onclick="page('wishlist')">Wishlist</button>
+  <button onclick="page('orders')">My Orders</button>
+  <button onclick="page('account')">Account</button>
+  <button onclick="page('reviews')">Reviews</button>
+  <button onclick="page('admin')">Admin</button>
+ </nav>
+</header>
+
+<main class="container">
+<div id="home" class="page">
+ <div class="hero">
+  <div>
+   <span class="tag">NEW SEASON · NEW STYLE</span>
+   <h1>Wear your style.<br>Own your story.</h1>
+   <p>Discover the latest fashion for men, women and children. Explore clothing, footwear and accessories at great prices.</p>
+   <button onclick="page('shop')">Shop Collection</button>
+   <button class="secondary" onclick="page('account')">Login / Register</button>
+  </div>
+  <div class="hero-icon">👗 👟 👜</div>
+ </div>
+ <section>
+  <h2>Shop by Category</h2>
+  <div id="categories" class="grid"></div>
+ </section>
+ <section>
+  <div class="row"><h2>Trending Products</h2><button onclick="page('shop')">View All</button></div>
+  <div id="featured" class="grid"></div>
+ </section>
+ <section class="panel">
+  <h2>StyleHub Benefits</h2>
+  <div class="grid">
+   <div><h3>👕 Wide Selection</h3><p>Explore fashion for every age and occasion.</p></div>
+   <div><h3>🏷️ Special Offers</h3><p>Enjoy discounts on selected collections.</p></div>
+   <div><h3>📦 Order Tracking</h3><p>View your orders and their current status.</p></div>
+   <div><h3>🔄 Easy Returns</h3><p>Submit return and exchange requests.</p></div>
+  </div>
+ </section>
+</div>
+
+<div id="shop" class="page hidden">
+ <h2>Fashion Collection</h2>
+ <div class="panel">
+  <div class="two">
+   <div><label>Search Products</label><input id="search" placeholder="Search shirts, shoes, bags..."></div>
+   <div><label>Fashion For</label><select id="audience"><option value="">Everyone</option><option>Men</option><option>Women</option><option>Children</option></select></div>
+  </div>
+  <div class="two" style="margin-top:12px">
+   <div><label>Category</label><select id="category"><option value="">All Categories</option></select></div>
+   <div><label>Subcategory</label><select id="subcategory"><option value="">All Subcategories</option></select></div>
+  </div>
+  <div class="two" style="margin-top:12px">
+   <div><label>Maximum Price (₹)</label><input id="maxPrice" type="number" min="0" placeholder="No limit"></div>
+   <div><label>Sort Products</label><select id="sort"><option value="popular">Most Popular</option><option value="low">Price: Low to High</option><option value="high">Price: High to Low</option><option value="name">Name A–Z</option></select></div>
+  </div>
+  <div class="row" style="margin-top:12px"><button onclick="renderShop()">Apply Filters</button><button class="secondary" onclick="clearFilters()">Clear Filters</button></div>
+ </div>
+ <p id="productCount" class="small" style="margin:14px 0"></p>
+ <div id="productList" class="grid"></div>
+</div>
+
+<div id="cart" class="page hidden">
+ <h2>Your Shopping Cart</h2>
+ <div id="cartItems"></div>
+ <div id="cartSummary" class="panel hidden" style="margin-top:18px">
+  <div class="row"><span>Subtotal</span><strong id="subtotal"></strong></div>
+  <div class="row"><span>Discount</span><strong id="discount"></strong></div>
+  <div class="row"><span>Delivery</span><strong id="delivery"></strong></div>
+  <hr><div class="row"><h3>Total</h3><h3 id="total"></h3></div>
+  <div class="two" style="margin-top:12px"><div><label>Promo Code</label><input id="promo" placeholder="Try STYLE10"></div><div style="display:flex;align-items:end"><button onclick="applyPromo()">Apply Code</button></div></div>
+  <button style="margin-top:15px" onclick="prepareCheckout()">Proceed to Checkout</button>
+ </div>
+</div>
+
+<div id="checkout" class="page hidden">
+ <h2>Checkout</h2>
+ <div class="panel">
+  <form id="checkoutForm">
+   <div class="two"><div><label>Full Name</label><input id="cName" required></div><div><label>Email</label><input id="cEmail" type="email" required></div></div>
+   <div class="two"><div><label>Phone</label><input id="cPhone" required type="tel"></div><div><label>City</label><input id="cCity" required></div></div>
+   <label>Delivery Address</label><textarea id="cAddress" rows="3" required></textarea>
+   <div class="two"><div><label>Product Size</label><p class="small">Select a size for each item in the cart.</p></div><div><label>Payment Method</label><select id="payment"><option>Cash on Delivery</option><option>UPI (demo)</option><option>Card Payment (demo)</option></select></div></div>
+   <div id="checkoutSizes"></div>
+   <div class="panel" style="background:var(--light)"><div class="row"><span>Order Total</span><h3 id="checkoutTotal"></h3></div><p class="small">No real payment is processed.</p></div>
+   <button type="submit">Place Order</button>
+  </form>
+ </div>
+</div>
+
+<div id="orders" class="page hidden">
+ <h2>Order Tracking & History</h2>
+ <div class="panel"><form id="orderLookup"><label>Enter your checkout email</label><input id="orderEmail" type="email" required><button type="submit">View Orders</button></form></div>
+ <section><div id="orderList" class="grid"></div></section>
+</div>
+
+<div id="wishlist" class="page hidden">
+ <h2>My Wishlist</h2><div id="wishlistList" class="grid"></div>
+</div>
+
+<div id="account" class="page hidden">
+ <h2>Customer Account</h2>
+ <div class="grid">
+  <div class="panel"><h3>Register</h3>
+   <form id="registerForm">
+    <label>Full Name</label><input id="regName" required>
+    <label>Email</label><input id="regEmail" type="email" required>
+    <label>Phone</label><input id="regPhone" required>
+    <label>Password</label><input id="regPassword" type="password" minlength="6" required>
+    <button type="submit">Create Account</button>
+   </form>
+  </div>
+  <div class="panel"><h3>Login</h3>
+   <form id="loginForm"><label>Email</label><input id="loginEmail" type="email" required><label>Password</label><input id="loginPassword" type="password" required><button type="submit">Login</button></form>
+   <hr><p id="sessionInfo">Browsing as guest.</p><button class="secondary" onclick="logout()">Logout</button>
+  </div>
+ </div>
+ <section class="panel"><h3>Recommended for You</h3><div id="recommendations" class="grid"></div></section>
+</div>
+
+<div id="reviews" class="page hidden">
+ <h2>Customer Reviews</h2>
+ <div class="panel"><form id="reviewForm">
+  <label>Your Name</label><input id="rName" required>
+  <label>Product</label><select id="rProduct"></select>
+  <label>Rating</label><select id="rating"><option value="5">★★★★★ Excellent</option><option value="4">★★★★ Very Good</option><option value="3">★★★ Good</option><option value="2">★★ Fair</option><option value="1">★ Poor</option></select>
+  <label>Your Review</label><textarea id="rText" rows="3" required></textarea>
+  <button type="submit">Submit Review</button>
+ </form></div>
+ <section><div id="reviewList" class="grid"></div></section>
+</div>
+
+<div id="admin" class="page hidden">
+ <h2>StyleHub Admin Panel</h2>
+ <div id="adminLogin" class="panel"><form id="adminLoginForm"><label>Admin Password</label><input id="adminPassword" type="password" required><button>Login as Admin</button></form><p class="small">Demo password: <b>STYLE123</b></p></div>
+ <div id="adminPanel" class="hidden">
+  <div id="stats" class="grid"></div>
+  <section><h3>Add / Edit Product</h3>
+   <form id="productForm" class="panel">
+    <input id="editId" type="hidden">
+    <label>Product Name</label><input id="aName" required>
+    <div class="two"><div><label>Audience</label><select id="aAudience"><option>Men</option><option>Women</option><option>Children</option></select></div><div><label>Category</label><select id="aCategory"></select></div></div>
+    <div class="two"><div><label>Subcategory</label><input id="aSubcategory" required></div><div><label>Size Options</label><input id="aSizes" placeholder="S,M,L,XL" required></div></div>
+    <div class="two"><div><label>Price (₹)</label><input id="aPrice" type="number" min="1" required></div><div><label>Stock</label><input id="aStock" type="number" min="0" required></div></div>
+    <label>Description</label><textarea id="aDescription" rows="3" required></textarea>
+    <label>Product Emoji</label><input id="aEmoji" placeholder="e.g. 👕">
+    <div class="row"><button type="submit">Save Product</button><button type="button" class="secondary" onclick="resetProductForm()">Clear</button></div>
+   </form>
+  </section>
+  <section><h3>Manage Products</h3><div id="adminProducts" class="table-wrap"></div></section>
+  <section><h3>Customer Orders</h3><div id="adminOrders" class="table-wrap"></div></section>
+  <section><h3>Customer Details</h3><div id="adminCustomers" class="table-wrap"></div></section>
+  <button class="danger" onclick="adminLogout()">Logout Admin</button>
+ </div>
+</div>
+</main>
+<footer>© 2026 StyleHub Fashion Store | Find Your Style</footer>
+<div id="toast"></div>
+
+<script>
+const categoryData=[
+ {name:"Clothing",subs:["T-Shirts","Shirts","Jeans","Dresses","Formal Wear","Jackets"]},
+ {name:"Footwear",subs:["Sneakers","Formal Shoes","Sandals","Boots"]},
+ {name:"Accessories",subs:["Bags","Watches","Belts","Sunglasses"]},
+ {name:"Seasonal Wear",subs:["Winter Wear","Summer Wear","Festive Wear"]}
+];
+const initialProducts=[
+ {id:1,name:"Classic Cotton T-Shirt",audience:"Men",category:"Clothing",subcategory:"T-Shirts",price:699,stock:30,sizes:["S","M","L","XL"],description:"A comfortable cotton T-shirt for everyday casual wear.",emoji:"👕",popular:100},
+ {id:2,name:"Slim Fit Formal Shirt",audience:"Men",category:"Clothing",subcategory:"Shirts",price:1199,stock:18,sizes:["S","M","L","XL"],description:"A smart slim-fit shirt suitable for work and formal occasions.",emoji:"👔",popular:90},
+ {id:3,name:"Classic Blue Jeans",audience:"Men",category:"Clothing",subcategory:"Jeans",price:1499,stock:22,sizes:["30","32","34","36"],description:"Versatile denim jeans designed for everyday comfort.",emoji:"👖",popular:85},
+ {id:4,name:"Floral Summer Dress",audience:"Women",category:"Clothing",subcategory:"Dresses",price:1799,stock:15,sizes:["S","M","L","XL"],description:"A lightweight floral dress for warm-weather outings.",emoji:"👗",popular:100},
+ {id:5,name:"Women's Casual Top",audience:"Women",category:"Clothing",subcategory:"T-Shirts",price:799,stock:24,sizes:["S","M","L","XL"],description:"A stylish everyday top that pairs easily with jeans.",emoji:"👚",popular:82},
+ {id:6,name:"Running Sneakers",audience:"Men",category:"Footwear",subcategory:"Sneakers",price:2299,stock:14,sizes:["7","8","9","10"],description:"Lightweight sneakers designed for everyday movement.",emoji:"👟",popular:95},
+ {id:7,name:"Women's Fashion Sandals",audience:"Women",category:"Footwear",subcategory:"Sandals",price:999,stock:20,sizes:["5","6","7","8"],description:"Comfortable sandals for casual outings and daily wear.",emoji:"🩴",popular:75},
+ {id:8,name:"Kids Cartoon T-Shirt",audience:"Children",category:"Clothing",subcategory:"T-Shirts",price:499,stock:28,sizes:["4Y","6Y","8Y","10Y"],description:"A soft and colourful T-shirt for children.",emoji:"👕",popular:80},
+ {id:9,name:"Kids School Shoes",audience:"Children",category:"Footwear",subcategory:"Formal Shoes",price:899,stock:12,sizes:["1","2","3","4"],description:"Durable and comfortable shoes for school days.",emoji:"👞",popular:70},
+ {id:10,name:"Everyday Shoulder Bag",audience:"Women",category:"Accessories",subcategory:"Bags",price:1599,stock:10,sizes:["One Size"],description:"A practical shoulder bag for daily essentials.",emoji:"👜",popular:88},
+ {id:11,name:"Winter Puffer Jacket",audience:"Men",category:"Seasonal Wear",subcategory:"Winter Wear",price:2799,stock:9,sizes:["M","L","XL","XXL"],description:"A warm outer layer for chilly weather.",emoji:"🧥",popular:78},
+ {id:12,name:"Classic Wrist Watch",audience:"Men",category:"Accessories",subcategory:"Watches",price:1899,stock:11,sizes:["One Size"],description:"A versatile wristwatch with a timeless design.",emoji:"⌚",popular:72}
+];
+function load(k,d){try{let x=localStorage.getItem(k);return x?JSON.parse(x):JSON.parse(JSON.stringify(d));}catch(e){return JSON.parse(JSON.stringify(d));}}
+let products=load("sh_products",initialProducts),cart=load("sh_cart",[]),wishlist=load("sh_wishlist",[]),orders=load("sh_orders",[]),customers=load("sh_customers",[]),reviews=load("sh_reviews",[]);
+let currentEmail="",adminOn=false,promoApplied=false,browsing={};
+function save(){try{for(const [k,v] of Object.entries({sh_products:products,sh_cart:cart,sh_wishlist:wishlist,sh_orders:orders,sh_customers:customers,sh_reviews:reviews}))localStorage.setItem(k,JSON.stringify(v));}catch(e){toast("Could not save browser data.");}}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN");}
+function toast(s){const t=document.getElementById("toast");t.textContent=s;t.style.display="block";setTimeout(()=>t.style.display="none",3000);}
+function product(id){return products.find(p=>p.id===Number(id));}
+function page(id){document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");if(id==="shop")renderShop();if(id==="cart")renderCart();if(id==="wishlist")renderWishlist();if(id==="orders")renderOrders(document.getElementById("orderEmail").value);if(id==="reviews")renderReviews();if(id==="account")renderAccount();if(id==="admin"&&adminOn)renderAdmin();window.scrollTo({top:0,behavior:"smooth"});}
+function renderCategories(){
+ const opts=categoryData.map(c=>`<option>${esc(c.name)}</option>`).join("");
+ document.getElementById("category").innerHTML='<option value="">All Categories</option>'+opts;
+ document.getElementById("aCategory").innerHTML=opts;
+ document.getElementById("categories").innerHTML=categoryData.map(c=>`<div class="card" onclick="chooseCategory('${esc(c.name)}')" style="cursor:pointer"><div class="product-icon">${c.name==="Clothing"?"👗":c.name==="Footwear"?"👟":c.name==="Accessories"?"👜":"🧥"}</div><h3>${esc(c.name)}</h3><p class="small">${c.subs.map(esc).join(" · ")}</p><button>Explore</button></div>`).join("");
+ updateSubcategories();
+}
+function updateSubcategories(){const c=document.getElementById("category").value;const subs=c?categoryData.find(x=>x.name===c).subs:categoryData.flatMap(x=>x.subs);document.getElementById("subcategory").innerHTML='<option value="">All Subcategories</option>'+subs.map(s=>`<option>${esc(s)}</option>`).join("");}
+document.getElementById("category").addEventListener("change",updateSubcategories);
+function chooseCategory(c){page("shop");document.getElementById("category").value=c;updateSubcategories();renderShop();}
+function card(p){
+ const rr=reviews.filter(r=>r.productId===p.id),avg=rr.length?(rr.reduce((n,r)=>n+r.rating,0)/rr.length).toFixed(1):"New";
+ return `<div class="card"><div class="product-icon">${esc(p.emoji||"📦")}</div><span class="tag">${esc(p.audience)} · ${esc(p.category)}</span><h3>${esc(p.name)}</h3><p class="small">${esc(p.subcategory)}</p><p>${esc(p.description)}</p><p class="small">⭐ ${avg} · ${rr.length} review(s)</p><p class="price">${money(p.price)}</p><p class="small">${p.stock>0?"In stock: "+p.stock:"Out of stock"}</p><p class="small">Sizes: ${p.sizes.map(esc).join(", ")}</p><button class="secondary" onclick="sizeGuide(${p.id})">Size Guide</button><div class="product-actions"><button onclick="addCart(${p.id})" ${p.stock<=0?"disabled":""}>Add to Cart</button><button class="secondary" onclick="toggleWish(${p.id})">${wishlist.includes(p.id)?"♥ Saved":"♡ Wishlist"}</button></div></div>`;
+}
+function renderShop(){
+ const q=document.getElementById("search").value.toLowerCase().trim(),aud=document.getElementById("audience").value,cat=document.getElementById("category").value,sub=document.getElementById("subcategory").value,max=Number(document.getElementById("maxPrice").value)||Infinity;
+ let a=products.filter(p=>(!q||(p.name+" "+p.description+" "+p.category+" "+p.subcategory).toLowerCase().includes(q))&&(!aud||p.audience===aud)&&(!cat||p.category===cat)&&(!sub||p.subcategory===sub)&&p.price<=max);
+ const s=document.getElementById("sort").value;if(s==="low")a.sort((x,y)=>x.price-y.price);if(s==="high")a.sort((x,y)=>y.price-x.price);if(s==="name")a.sort((x,y)=>x.name.localeCompare(y.name));if(s==="popular")a.sort((x,y)=>(y.popular||0)-(x.popular||0));
+ document.getElementById("productCount").textContent=a.length+" product(s) found.";document.getElementById("productList").innerHTML=a.map(card).join("")||"<p>No matching products found.</p>";
+}
+function clearFilters(){["search","maxPrice"].forEach(id=>document.getElementById(id).value="");["audience","category"].forEach(id=>document.getElementById(id).value="");updateSubcategories();document.getElementById("sort").value="popular";renderShop();}
+document.getElementById("search").addEventListener("input",renderShop);document.getElementById("audience").addEventListener("change",renderShop);document.getElementById("sort").addEventListener("change",renderShop);
+function sizeGuide(id){const p=product(id);if(!p)return;alert("Size guide for "+p.name+"\nAvailable sizes: "+p.sizes.join(", ")+"\nChoose your usual size and check the product label. For footwear, use your regular shoe size.");}
+function addCart(id){const p=product(id);if(!p||p.stock<=0)return toast("Product is out of stock.");let x=cart.find(x=>x.id===id);if(x){if(x.qty>=p.stock)return toast("Stock limit reached.");x.qty++;}else cart.push({id,qty:1,size:p.sizes[0]});browsing[p.category]=(browsing[p.category]||0)+1;save();cartCount();renderShop();toast("Added to cart.");}
+function cartCount(){document.getElementById("cartCount").textContent=cart.reduce((n,x)=>n+x.qty,0);}
+function qty(id,v){const x=cart.find(x=>x.id===id),p=product(id);if(!x||!p)return;v=Number(v);if(!Number.isInteger(v)||v<1)cart=cart.filter(x=>x.id!==id);else if(v>p.stock)toast("Quantity exceeds available stock.");else x.qty=v;save();renderCart();cartCount();}
+function removeCart(id){cart=cart.filter(x=>x.id!==id);save();renderCart();cartCount();}
+function setSize(id,v){const x=cart.find(x=>x.id===id);if(x){x.size=v;save();}}
+function calc(){const subtotal=cart.reduce((n,x)=>n+(product(x.id)?product(x.id).price*x.qty:0),0),discount=promoApplied?Math.round(subtotal*.10):0,delivery=subtotal>1999?0:(subtotal?99:0);return{subtotal,discount,delivery,total:subtotal-discount+delivery};}
+function renderCart(){
+ document.getElementById("cartItems").innerHTML=cart.length?cart.map(x=>{const p=product(x.id);if(!p)return"";return `<div class="card row" style="margin-bottom:12px"><div><h3>${esc(p.name)}</h3><p>${money(p.price)} each</p></div><div style="min-width:110px"><label>Quantity</label><input type="number" min="1" max="${p.stock}" value="${x.qty}" onchange="qty(${x.id},this.value)"></div><div style="min-width:120px"><label>Size</label><select onchange="setSize(${x.id},this.value)">${p.sizes.map(s=>`<option ${x.size===s?"selected":""}>${esc(s)}</option>`).join("")}</select></div><strong>${money(p.price*x.qty)}</strong><button class="danger" onclick="removeCart(${x.id})">Remove</button></div>`;}).join(""):"<div class='panel'><p>Your cart is empty.</p><button onclick=\"page('shop')\">Continue Shopping</button></div>";
+ document.getElementById("cartSummary").classList.toggle("hidden",!cart.length);const c=calc();document.getElementById("subtotal").textContent=money(c.subtotal);document.getElementById("discount").textContent="-"+money(c.discount);document.getElementById("delivery").textContent=money(c.delivery);document.getElementById("total").textContent=money(c.total);document.getElementById("checkoutTotal").textContent=money(c.total);
+}
+function applyPromo(){promoApplied=document.getElementById("promo").value.trim().toUpperCase()==="STYLE10";toast(promoApplied?"STYLE10 applied: 10% off.":"Invalid code. Try STYLE10.");renderCart();}
+function prepareCheckout(){if(!cart.length)return toast("Your cart is empty.");const c=customers.find(x=>x.email===currentEmail);if(c){document.getElementById("cName").value=c.name;document.getElementById("cEmail").value=c.email;document.getElementById("cPhone").value=c.phone||"";document.getElementById("cCity").value=c.city||"";document.getElementById("cAddress").value=c.address||"";}document.getElementById("checkoutSizes").innerHTML=cart.map(x=>{const p=product(x.id);return p?`<div class="two"><div><label>${esc(p.name)} — size</label><select onchange="setSize(${x.id},this.value)">${p.sizes.map(s=>`<option ${x.size===s?"selected":""}>${esc(s)}</option>`).join("")}</select></div><div><label>Quantity</label><input value="${x.qty}" readonly></div></div>`:"";}).join("");renderCart();page("checkout");}
+document.getElementById("checkoutForm").addEventListener("submit",e=>{
+ e.preventDefault();if(!cart.length)return toast("Your cart is empty.");
+ for(const x of cart){const p=product(x.id);if(!p||p.stock<x.qty)return toast("Stock changed. Please review your cart.");}
+ const c=calc(),email=document.getElementById("cEmail").value.trim().toLowerCase();
+ const o={id:"SH"+Date.now(),name:document.getElementById("cName").value.trim(),email,phone:document.getElementById("cPhone").value.trim(),city:document.getElementById("cCity").value.trim(),address:document.getElementById("cAddress").value.trim(),payment:document.getElementById("payment").value,items:cart.map(x=>{const p=product(x.id);return{id:p.id,name:p.name,price:p.price,qty:x.qty,size:x.size};}),total:c.total,discount:c.discount,status:"Order Placed",date:new Date().toLocaleString()};
+ cart.forEach(x=>product(x.id).stock-=x.qty);orders.unshift(o);
+ let customer=customers.find(x=>x.email===email);if(customer){customer.name=o.name;customer.phone=o.phone;customer.city=o.city;customer.address=o.address;}else customers.push({name:o.name,email,phone:o.phone,city:o.city,address:o.address,password:""});
+ currentEmail=email;cart=[];promoApplied=false;save();cartCount();renderShop();renderAdmin();e.target.reset();document.getElementById("orderEmail").value=email;renderOrders(email);page("orders");toast("Order placed! Order ID: "+o.id);
+});
+document.getElementById("orderLookup").addEventListener("submit",e=>{e.preventDefault();renderOrders(document.getElementById("orderEmail").value);});
+function renderOrders(email){const list=orders.filter(o=>o.email===String(email||"").trim().toLowerCase());document.getElementById("orderList").innerHTML=list.map(o=>`<div class="card"><div class="row"><h3>Order ${esc(o.id)}</h3><span class="tag">${esc(o.status)}</span></div><p class="small">${esc(o.date)}</p><hr>${o.items.map(i=>`<p>${esc(i.name)} — Size ${esc(i.size)} × ${i.qty}</p>`).join("")}<hr><p>Payment: ${esc(o.payment)}</p><p>Delivery: ${esc(o.city)}, ${esc(o.address)}</p><h3>Total: ${money(o.total)}</h3><button class="secondary" onclick="returnRequest('${esc(o.id)}')">Request Return / Exchange</button></div>`).join("")||"<p>No orders found for this email.</p>";}
+function returnRequest(id){const o=orders.find(o=>o.id===id);if(!o)return;const reason=prompt("Enter return or exchange reason:");if(reason===null||!reason.trim())return;o.returnRequest=reason.trim();o.returnStatus="Request submitted";save();renderOrders(o.email);renderAdmin();toast("Return/exchange request submitted.");}
+function toggleWish(id){wishlist=wishlist.includes(id)?wishlist.filter(x=>x!==id):[...wishlist,id];save();renderWishlist();renderShop();toast("Wishlist updated.");}
+function renderWishlist(){document.getElementById("wishlistList").innerHTML=wishlist.map(id=>product(id)).filter(Boolean).map(card).join("")||"<p>Your wishlist is empty.</p>";}
+document.getElementById("registerForm").addEventListener("submit",e=>{e.preventDefault();const email=document.getElementById("regEmail").value.trim().toLowerCase();if(customers.some(c=>c.email===email))return toast("Account already exists.");customers.push({name:document.getElementById("regName").value.trim(),email,phone:document.getElementById("regPhone").value.trim(),password:document.getElementById("regPassword").value});currentEmail=email;save();e.target.reset();renderAccount();toast("Registration successful.");});
+document.getElementById("loginForm").addEventListener("submit",e=>{e.preventDefault();const email=document.getElementById("loginEmail").value.trim().toLowerCase(),pw=document.getElementById("loginPassword").value,c=customers.find(c=>c.email===email&&c.password===pw);if(!c)return toast("Incorrect login details.");currentEmail=email;e.target.reset();renderAccount();toast("Login successful.");});
+function logout(){currentEmail="";renderAccount();toast("Logged out.");}
+function renderAccount(){const c=customers.find(c=>c.email===currentEmail);document.getElementById("sessionInfo").textContent=c?"Logged in as "+c.name+" ("+c.email+")":"Browsing as guest.";const cat=Object.keys(browsing).sort((a,b)=>browsing[b]-browsing[a])[0];document.getElementById("recommendations").innerHTML=products.filter(p=>cat?p.category===cat:true).slice(0,4).map(card).join("");}
+document.getElementById("reviewForm").addEventListener("submit",e=>{e.preventDefault();reviews.unshift({id:Date.now(),name:document.getElementById("rName").value.trim(),productId:Number(document.getElementById("rProduct").value),rating:Number(document.getElementById("rating").value),text:document.getElementById("rText").value.trim(),date:new Date().toLocaleDateString()});save();e.target.reset();renderReviews();renderShop();toast("Review submitted.");});
+function renderReviews(){document.getElementById("rProduct").innerHTML=products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");document.getElementById("reviewList").innerHTML=reviews.map(r=>`<div class="card"><h3>${esc((product(r.productId)||{}).name||"Product")}</h3><p>By ${esc(r.name)}</p><p style="color:#c38b18">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</p><p>${esc(r.text)}</p><p class="small">${esc(r.date)}</p></div>`).join("")||"<p>No reviews yet.</p>";}
+
+// Admin
+document.getElementById("adminLoginForm").addEventListener("submit",e=>{e.preventDefault();if(document.getElementById("adminPassword").value==="STYLE123"){adminOn=true;document.getElementById("adminLogin").classList.add("hidden");document.getElementById("adminPanel").classList.remove("hidden");renderAdmin();toast("Admin login successful.");}else toast("Incorrect password.");});
+function adminLogout(){adminOn=false;document.getElementById("adminLogin").classList.remove("hidden");document.getElementById("adminPanel").classList.add("hidden");document.getElementById("adminPassword").value="";}
+document.getElementById("productForm").addEventListener("submit",e=>{e.preventDefault();if(!adminOn)return;const id=Number(document.getElementById("editId").value),data={name:document.getElementById("aName").value.trim(),audience:document.getElementById("aAudience").value,category:document.getElementById("aCategory").value,subcategory:document.getElementById("aSubcategory").value.trim(),sizes:document.getElementById("aSizes").value.split(",").map(s=>s.trim()).filter(Boolean),price:Number(document.getElementById("aPrice").value),stock:Number(document.getElementById("aStock").value),description:document.getElementById("aDescription").value.trim(),emoji:document.getElementById("aEmoji").value.trim()||"👕"};if(!data.sizes.length)return toast("Enter at least one size.");if(id){Object.assign(product(id),data);toast("Product updated.");}else{products.push({id:Date.now(),...data,popular:0});toast("Product added.");}save();resetProductForm();renderCategories();renderShop();renderAdmin();renderReviews();});
+function editProduct(id){const p=product(id);if(!p)return;document.getElementById("editId").value=p.id;for(const [field,val] of Object.entries({aName:p.name,aAudience:p.audience,aCategory:p.category,aSubcategory:p.subcategory,aSizes:p.sizes.join(","),aPrice:p.price,aStock:p.stock,aDescription:p.description,aEmoji:p.emoji||""}))document.getElementById(field).value=val;document.getElementById("productForm").scrollIntoView({behavior:"smooth"});}
+function resetProductForm(){document.getElementById("productForm").reset();document.getElementById("editId").value="";}
+function deleteProduct(id){if(!confirm("Delete this product?"))return;products=products.filter(p=>p.id!==id);cart=cart.filter(x=>x.id!==id);wishlist=wishlist.filter(x=>x!==id);save();renderCategories();renderShop();renderWishlist();renderAdmin();cartCount();toast("Product deleted.");}
+function updateStatus(id,status){const o=orders.find(o=>o.id===id);if(o){o.status=status;save();renderAdmin();renderOrders(o.email);toast("Order status updated.");}}
+function renderAdmin(){if(!adminOn)return;document.getElementById("stats").innerHTML=`<div class="card"><h3>Products</h3><h2>${products.length}</h2></div><div class="card"><h3>Orders</h3><h2>${orders.length}</h2></div><div class="card"><h3>Customers</h3><h2>${customers.length}</h2></div><div class="card"><h3>Total Sales</h3><h2>${money(orders.reduce((n,o)=>n+o.total,0))}</h2></div>`;
+document.getElementById("adminProducts").innerHTML=`<table><tr><th>Product</th><th>Audience</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>${products.map(p=>`<tr><td>${esc(p.name)}<br><span class="small">${esc(p.description)}</span></td><td>${esc(p.audience)}</td><td>${esc(p.category)} / ${esc(p.subcategory)}</td><td>${money(p.price)}</td><td>${p.stock}</td><td><button onclick="editProduct(${p.id})">Edit</button> <button class="danger" onclick="deleteProduct(${p.id})">Delete</button></td></tr>`).join("")}</table>`;
+document.getElementById("adminOrders").innerHTML=orders.length?`<table><tr><th>Order</th><th>Customer</th><th>Address</th><th>Items</th><th>Total</th><th>Status</th><th>Returns</th></tr>${orders.map(o=>`<tr><td>${esc(o.id)}<br>${esc(o.date)}</td><td>${esc(o.name)}<br>${esc(o.email)}<br>${esc(o.phone)}</td><td>${esc(o.city)}<br>${esc(o.address)}</td><td>${o.items.map(i=>esc(i.name)+" × "+i.qty+" / "+esc(i.size)).join("<br>")}</td><td>${money(o.total)}</td><td><select onchange="updateStatus('${esc(o.id)}',this.value)">${["Order Placed","Processing","Shipped","Delivered","Cancelled"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select></td><td>${esc(o.returnStatus||"None")}<br>${esc(o.returnRequest||"")}</td></tr>`).join("")}</table>`:"<p>No orders yet.</p>";
+document.getElementById("adminCustomers").innerHTML=customers.length?`<table><tr><th>Name</th><th>Email</th><th>Phone</th><th>Orders</th></tr>${customers.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.email)}</td><td>${esc(c.phone)}</td><td>${orders.filter(o=>o.email===c.email).length}</td></tr>`).join("")}</table>`:"<p>No customers registered.</p>";}
+
+// Startup
+renderCategories();renderShop();renderCart();renderWishlist();renderReviews();renderAccount();cartCount();
+</script>
+</body>
+</html>

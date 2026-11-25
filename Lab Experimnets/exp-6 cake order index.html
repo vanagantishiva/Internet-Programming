@@ -1,0 +1,521 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SweetTreats - Online Cake Ordering</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#fff8f5;color:#40302e;line-height:1.6}
+header{background:#702d45;color:white;padding:17px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+header h1{color:#ffd4b8}
+nav{display:flex;flex-wrap:wrap;gap:12px}
+nav a{color:white;text-decoration:none;font-size:14px}
+nav a:hover{color:#ffd4b8}
+.hero{text-align:center;padding:50px 15px;background:linear-gradient(120deg,#702d45,#c66b7b);color:white}
+.hero h2{font-size:34px;margin-bottom:10px}
+section{padding:30px 6%;scroll-margin-top:15px}
+.title{text-align:center;color:#702d45;margin-bottom:20px}
+button{border:0;background:#e8a06b;color:#38231d;padding:10px 14px;border-radius:5px;cursor:pointer;font-weight:bold;margin:4px}
+button:hover{opacity:.85}
+.secondary{background:#eadfe0}
+.danger{background:#c94b54;color:white}
+.card,form,.product,.order{background:white;padding:17px;border-radius:10px;box-shadow:0 3px 12px #552b2b12}
+form{max-width:650px;margin:auto}
+label{display:block;font-weight:bold;margin-top:8px}
+input,select,textarea{width:100%;padding:10px;margin:5px 0 12px;border:1px solid #dccbca;border-radius:5px;font:inherit}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.product,.order{margin:12px 0}
+.cake-image{font-size:60px;text-align:center;padding:18px;background:#fff0e9;border-radius:8px;margin-bottom:12px}
+.price{font-size:21px;color:#a34e36;font-weight:bold}
+.small{font-size:13px;color:#786563}
+.notice{text-align:center;margin:12px;color:#786563}
+.hidden{display:none}
+.badge{display:inline-block;background:#f9e0d6;padding:4px 9px;border-radius:12px;font-size:12px}
+footer{background:#702d45;color:white;text-align:center;padding:22px}
+details{background:white;padding:12px;margin:8px 0;border-radius:5px}
+@media(max-width:600px){header{justify-content:center;text-align:center}.hero h2{font-size:27px}section{padding:24px 4%}}
+@media print{header,nav,footer,button,form,.hero{display:none!important}body{background:white}section{padding:5px}.order{box-shadow:none;border:1px solid #aaa}}
+</style>
+</head>
+<body>
+
+<header>
+<h1>SweetTreats 🎂</h1>
+<nav>
+<a href="#home">Home</a>
+<a href="#cakes">Cakes</a>
+<a href="#register">Register</a>
+<a href="#login">Login</a>
+<a href="#cart">Cart</a>
+<a href="#orders">My Orders</a>
+<a href="#admin">Admin</a>
+<a href="#contact">Contact</a>
+</nav>
+</header>
+
+<div class="hero" id="home">
+<h2>Make Every Moment Sweeter!</h2>
+<p>Discover delicious cakes for birthdays, weddings, and every celebration.</p>
+<button onclick="document.getElementById('cakes').scrollIntoView({behavior:'smooth'})">Explore Cakes</button>
+</div>
+
+<section id="cakes">
+<h2 class="title">Our Delicious Cakes</h2>
+<div class="grid">
+<div class="card">
+<label for="categoryFilter">Category</label>
+<select id="categoryFilter">
+<option>All</option><option>Birthday</option><option>Chocolate</option>
+<option>Wedding</option><option>Fruit</option><option>Special Occasion</option>
+</select>
+<label for="flavorFilter">Flavor</label>
+<select id="flavorFilter">
+<option>All</option><option>Chocolate</option><option>Vanilla</option>
+<option>Strawberry</option><option>Black Forest</option><option>Red Velvet</option>
+</select>
+<label for="priceFilter">Maximum Price</label>
+<select id="priceFilter">
+<option value="10000">All Prices</option>
+<option value="500">Up to ₹500</option>
+<option value="800">Up to ₹800</option>
+<option value="1200">Up to ₹1200</option>
+</select>
+<button onclick="renderProducts()">Apply Filters</button>
+<button class="secondary" onclick="resetFilters()">Reset</button>
+</div>
+<div class="card">
+<h3>Freshly Baked Daily</h3>
+<p>Choose your favorite cake, select a size, and add a personalized message.</p>
+<p>Available sizes: 0.5 kg, 1 kg, and 2 kg.</p>
+<p class="small">Prices shown are demonstration prices.</p>
+</div>
+</div>
+<div id="productList"></div>
+</section>
+
+<section id="register">
+<h2 class="title">Customer Registration</h2>
+<form id="registerForm">
+<label for="regName">Full Name</label>
+<input id="regName" required>
+<label for="regEmail">Email Address</label>
+<input id="regEmail" type="email" required>
+<label for="regPassword">Password</label>
+<input id="regPassword" type="password" minlength="4" required>
+<label for="regAddress">Delivery Address</label>
+<textarea id="regAddress" required></textarea>
+<button type="submit">Register</button>
+<p id="registerMessage"></p>
+</form>
+</section>
+
+<section id="login">
+<h2 class="title">Customer Login</h2>
+<form id="loginForm">
+<label for="loginEmail">Email Address</label>
+<input id="loginEmail" type="email" required>
+<label for="loginPassword">Password</label>
+<input id="loginPassword" type="password" required>
+<button type="submit">Login</button>
+<button type="button" class="secondary" onclick="changePassword()">Change Password</button>
+<p id="loginMessage"></p>
+</form>
+</section>
+
+<section id="cart">
+<h2 class="title">Shopping Cart</h2>
+<div id="cartList"></div>
+<p id="cartTotal" class="price" style="text-align:center"></p>
+<div style="text-align:center"><button onclick="goCheckout()">Proceed to Checkout</button></div>
+</section>
+
+<section id="checkout">
+<h2 class="title">Place Your Order</h2>
+<form id="checkoutForm">
+<label for="customerName">Customer Name</label>
+<input id="customerName" required>
+<label for="customerEmail">Email Address</label>
+<input id="customerEmail" type="email" required>
+<label for="deliveryAddress">Shipping Address</label>
+<textarea id="deliveryAddress" required></textarea>
+<label for="deliveryDate">Preferred Delivery Date</label>
+<input id="deliveryDate" type="date" required>
+<label for="paymentMethod">Payment Method</label>
+<select id="paymentMethod">
+<option>Demo Online Payment</option><option>Cash on Delivery Demo</option>
+</select>
+<p id="checkoutTotal" class="price"></p>
+<button type="submit">Confirm Order</button>
+<p class="small">No real payment is collected.</p>
+<p id="checkoutMessage"></p>
+</form>
+</section>
+
+<section id="orders">
+<h2 class="title">My Orders & Delivery Status</h2>
+<p id="userStatus" class="notice">Please log in to view your orders.</p>
+<div id="orderList"></div>
+</section>
+
+<section id="admin">
+<h2 class="title">Administrator Panel</h2>
+<div class="card">
+<p><strong>Demo admin password:</strong> ADMIN123</p>
+<form id="adminLogin">
+<label for="adminPassword">Admin Password</label>
+<input type="password" id="adminPassword" required>
+<button type="submit">Admin Login</button>
+<p id="adminMessage"></p>
+</form>
+</div>
+
+<div id="adminContent" class="hidden">
+<h3 style="margin:20px 0 10px">Add New Cake</h3>
+<form id="productForm">
+<label for="cakeName">Cake Name</label>
+<input id="cakeName" required>
+<label for="cakeCategory">Category</label>
+<select id="cakeCategory">
+<option>Birthday</option><option>Chocolate</option><option>Wedding</option>
+<option>Fruit</option><option>Special Occasion</option>
+</select>
+<label for="cakeFlavor">Flavor</label>
+<select id="cakeFlavor">
+<option>Chocolate</option><option>Vanilla</option><option>Strawberry</option>
+<option>Black Forest</option><option>Red Velvet</option>
+</select>
+<label for="cakeDescription">Description</label>
+<textarea id="cakeDescription" required></textarea>
+<label for="cakePrice">Base Price for 0.5 kg (₹)</label>
+<input id="cakePrice" type="number" min="1" required>
+<label for="cakeStock">Available Quantity</label>
+<input id="cakeStock" type="number" min="0" required>
+<button type="submit">Add Cake</button>
+</form>
+
+<h3 style="margin:25px 0 10px">Manage Cake Inventory</h3>
+<div id="adminProductList"></div>
+
+<h3 style="margin:25px 0 10px">Manage Customer Orders</h3>
+<div id="adminOrderList"></div>
+
+<h3 style="margin:25px 0 10px">Admin Report</h3>
+<button onclick="generateReport()">Generate Report</button>
+<button class="secondary" onclick="window.print()">Print Report</button>
+<div id="adminReport"></div>
+<h3 style="margin:25px 0 10px">Registered Customers</h3>
+<div id="userReport"></div>
+<button class="danger" onclick="adminLogout()">Admin Logout</button>
+</div>
+</section>
+
+<section id="contact">
+<h2 class="title">About Us & Contact</h2>
+<div class="grid">
+<div class="card"><h3>About SweetTreats</h3><p>We offer cakes for birthdays, weddings, anniversaries, and other special occasions.</p></div>
+<div class="card"><h3>Contact Us</h3><p>Email: support@sweettreats.example</p><p>Phone: +91 98765 43210</p></div>
+<div class="card"><h3>Delivery</h3><p>Enter your delivery address and preferred date when placing an order.</p></div>
+</div>
+</section>
+
+<section id="faq">
+<h2 class="title">Frequently Asked Questions</h2>
+<details><summary>How do I order a cake?</summary><p>Select a cake, customize its size and message, add it to the cart, and complete the checkout form.</p></details>
+<details><summary>Can I track my order?</summary><p>Log in and check the My Orders section for the current demo delivery status.</p></details>
+<details><summary>Can I change the delivery address?</summary><p>You can enter the correct address when placing a new order. Existing orders can be managed by the demo administrator.</p></details>
+<details><summary>Are payments processed online?</summary><p>No. Payment is simulated for this lab demonstration.</p></details>
+</section>
+
+<section id="privacy">
+<h2 class="title">Privacy Policy</h2>
+<div class="card"><p>This educational website stores demonstration account, cart, and order data in browser local storage. It does not send information to a server or process real payments. Do not enter real passwords or sensitive personal information.</p></div>
+</section>
+
+<footer>
+<p>&copy; 2026 SweetTreats | Internet Programming Lab Experiment</p>
+<p><a href="#faq" style="color:white">FAQ</a> | <a href="#privacy" style="color:white">Privacy Policy</a></p>
+</footer>
+
+<script>
+const initialProducts=[
+{id:1,name:"Chocolate Delight",category:"Chocolate",flavor:"Chocolate",description:"Rich chocolate cake with creamy chocolate frosting.",price:500,stock:15,icon:"🍫"},
+{id:2,name:"Birthday Vanilla Cake",category:"Birthday",flavor:"Vanilla",description:"Soft vanilla sponge perfect for birthdays.",price:450,stock:12,icon:"🎂"},
+{id:3,name:"Black Forest Cake",category:"Chocolate",flavor:"Black Forest",description:"Chocolate layers with cream and cherry topping.",price:650,stock:10,icon:"🍒"},
+{id:4,name:"Strawberry Dream",category:"Fruit",flavor:"Strawberry",description:"Fresh strawberry-flavored cake for celebrations.",price:600,stock:8,icon:"🍓"},
+{id:5,name:"Red Velvet Cake",category:"Special Occasion",flavor:"Red Velvet",description:"Classic red velvet cake with smooth cream frosting.",price:800,stock:7,icon:"❤️"},
+{id:6,name:"Wedding Celebration Cake",category:"Wedding",flavor:"Vanilla",description:"Elegant cake for weddings and anniversaries.",price:1200,stock:5,icon:"💍"}
+];
+
+function load(key,fallback){
+ try{const d=localStorage.getItem("st_"+key);return d===null?fallback:JSON.parse(d);}
+ catch(e){return fallback;}
+}
+let products=load("products",initialProducts);
+let users=load("users",[]);
+let orders=load("orders",[]);
+let cart=[];
+let currentUser=null;
+let adminOpen=false;
+
+const $=id=>document.getElementById(id);
+function save(key,value){localStorage.setItem("st_"+key,JSON.stringify(value));}
+function safe(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function findProduct(id){return products.find(p=>p.id===Number(id));}
+function sizeMultiplier(size){return {"0.5 kg":1,"1 kg":1.8,"2 kg":3.3}[size]||1;}
+function cartTotal(){return cart.reduce((sum,i)=>sum+i.price*i.quantity,0);}
+function orderTotal(items){return items.reduce((sum,i)=>sum+i.price*i.quantity,0);}
+
+function renderProducts(){
+ const category=$("categoryFilter").value;
+ const flavor=$("flavorFilter").value;
+ const max=Number($("priceFilter").value);
+ const list=products.filter(p=>(category==="All"||p.category===category)&&(flavor==="All"||p.flavor===flavor)&&p.price<=max);
+ $("productList").innerHTML=list.length?'<div class="grid">'+list.map(p=>`
+ <article class="product">
+ <div class="cake-image">${p.icon||"🎂"}</div>
+ <span class="badge">${safe(p.category)}</span>
+ <h3>${safe(p.name)}</h3>
+ <p>${safe(p.description)}</p>
+ <p>Flavor: ${safe(p.flavor)}</p>
+ <p>Available: ${p.stock}</p>
+ <p class="price">₹${p.price} / 0.5 kg</p>
+ <label for="size${p.id}">Cake Size</label>
+ <select id="size${p.id}">
+ <option>0.5 kg</option><option>1 kg</option><option>2 kg</option>
+ </select>
+ <label for="message${p.id}">Cake Message</label>
+ <input id="message${p.id}" maxlength="50" placeholder="Happy Birthday!">
+ <button onclick="addToCart(${p.id})" ${p.stock<=0?"disabled":""}>Add to Cart</button>
+ </article>`).join("")+'</div>':'<p class="notice">No cakes match your filters.</p>';
+}
+function resetFilters(){
+ $("categoryFilter").value="All";$("flavorFilter").value="All";$("priceFilter").value="10000";renderProducts();
+}
+function addToCart(id){
+ const p=findProduct(id);if(!p||p.stock<=0){alert("This cake is out of stock.");return;}
+ const size=$("size"+id).value;
+ const message=$("message"+id).value.trim();
+ const price=Math.round(p.price*sizeMultiplier(size));
+ cart.push({productId:id,name:p.name,size,message,price,quantity:1});
+ renderCart();alert("Cake added to cart.");
+}
+function renderCart(){
+ $("cartList").innerHTML=cart.length?cart.map((i,index)=>`
+ <div class="card" style="margin:10px 0">
+ <h3>${safe(i.name)}</h3><p>Size: ${safe(i.size)} | Message: ${safe(i.message||"None")}</p>
+ <p>₹${i.price}</p>
+ <label>Quantity</label>
+ <input type="number" min="1" max="20" value="${i.quantity}" onchange="changeQuantity(${index},this.value)">
+ <button class="danger" onclick="removeCartItem(${index})">Remove</button>
+ </div>`).join(""):'<p class="notice">Your cart is empty. Add a cake to begin.</p>';
+ $("cartTotal").textContent=cart.length?"Cart Total: ₹"+cartTotal():"";
+ $("checkoutTotal").textContent="Order Total: ₹"+cartTotal();
+}
+function changeQuantity(index,value){
+ const q=Number(value);
+ if(!Number.isInteger(q)||q<1||q>20){alert("Enter a quantity from 1 to 20.");renderCart();return;}
+ cart[index].quantity=q;renderCart();
+}
+function removeCartItem(index){cart.splice(index,1);renderCart();}
+function goCheckout(){
+ if(!cart.length){alert("Please add a cake to your cart first.");location.hash="cakes";return;}
+ if(!currentUser){alert("Please register and log in before checkout.");location.hash="login";return;}
+ $("customerName").value=currentUser.name;
+ $("customerEmail").value=currentUser.email;
+ $("deliveryAddress").value=currentUser.address||"";
+ $("checkout").scrollIntoView({behavior:"smooth"});
+}
+const today=new Date();
+today.setMinutes(today.getMinutes()-today.getTimezoneOffset());
+$("deliveryDate").min=today.toISOString().slice(0,10);
+$("deliveryDate").value=today.toISOString().slice(0,10);
+
+$("registerForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const name=$("regName").value.trim(),email=$("regEmail").value.trim().toLowerCase(),password=$("regPassword").value,address=$("regAddress").value.trim();
+ if(users.some(u=>u.email===email)){$("registerMessage").textContent="This email is already registered.";return;}
+ users.push({name,email,password,address});save("users",users);
+ $("registerMessage").textContent="Registration successful! Please log in.";
+ $("registerForm").reset();
+});
+$("loginForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const email=$("loginEmail").value.trim().toLowerCase(),password=$("loginPassword").value;
+ const u=users.find(x=>x.email===email&&x.password===password);
+ if(!u){$("loginMessage").textContent="Invalid login. Please register first if needed.";return;}
+ currentUser=u;
+ $("loginMessage").textContent="Welcome, "+u.name+"! Login successful.";
+ $("userStatus").textContent="Logged in as "+u.name+" ("+u.email+")";
+ renderOrders();
+});
+function changePassword(){
+ if(!currentUser){alert("Please log in first.");return;}
+ const old=prompt("Enter current password:");
+ if(old===null)return;
+ if(old!==currentUser.password){alert("Incorrect current password.");return;}
+ const next=prompt("Enter new password (minimum 4 characters):");
+ if(!next||next.length<4){alert("Password must be at least 4 characters.");return;}
+ const u=users.find(x=>x.email===currentUser.email);
+ u.password=next;currentUser=u;save("users",users);
+ alert("Password changed for this demo account.");
+}
+
+$("checkoutForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(!currentUser){alert("Please log in first.");return;}
+ if(!cart.length){alert("Your cart is empty.");return;}
+ if($("deliveryDate").value<today.toISOString().slice(0,10)){alert("Choose a valid delivery date.");return;}
+ for(const item of cart){
+  const p=findProduct(item.productId);
+  if(!p||p.stock<item.quantity){alert("Insufficient stock for "+item.name+".");return;}
+ }
+ const items=cart.map(i=>({...i}));
+ items.forEach(i=>{const p=findProduct(i.productId);p.stock-=i.quantity;});
+ const order={
+  id:"ST"+Math.floor(100000+Math.random()*900000),
+  userEmail:currentUser.email,
+  name:$("customerName").value.trim(),
+  email:$("customerEmail").value.trim(),
+  address:$("deliveryAddress").value.trim(),
+  date:$("deliveryDate").value,
+  payment:$("paymentMethod").value,
+  items,total:orderTotal(items),status:"Order Confirmed",
+  created:new Date().toLocaleDateString()
+ };
+ orders.push(order);save("orders",orders);save("products",products);
+ cart=[];renderCart();renderProducts();renderOrders();
+ $("checkoutMessage").textContent="Order placed successfully! Order ID: "+order.id;
+ alert("Order confirmed! Reference: "+order.id+". Payment is simulated.");
+});
+function renderOrders(){
+ if(!currentUser){$("orderList").innerHTML='<p class="notice">Log in to view your orders.</p>';return;}
+ const list=orders.filter(o=>o.userEmail===currentUser.email);
+ $("orderList").innerHTML=list.length?list.slice().reverse().map(o=>`
+ <div class="order">
+ <h3>Order ID: ${safe(o.id)}</h3>
+ <p>Customer: ${safe(o.name)}</p>
+ <p>Delivery address: ${safe(o.address)}</p>
+ <p>Delivery date: ${safe(o.date)}</p>
+ <p>Items: ${o.items.map(i=>safe(i.name)+" ("+safe(i.size)+") × "+i.quantity).join(", ")}</p>
+ <p class="price">Total: ₹${o.total}</p>
+ <p>Payment: ${safe(o.payment)}</p>
+ <p>Delivery Status: <strong>${safe(o.status)}</strong></p>
+ <button onclick="printOrder('${o.id}')">Print Order</button>
+ ${o.status!=="Cancelled"?`<button class="danger" onclick="cancelOrder('${o.id}')">Cancel Order</button>`:""}
+ </div>`).join(""):'<p class="notice">No orders yet.</p>';
+}
+function printOrder(id){
+ const o=orders.find(x=>x.id===id);
+ if(!o)return;
+ const w=window.open("","_blank","width=650,height=700");
+ if(!w){alert("Allow pop-ups to print the order, or use your browser's print option.");return;}
+ w.document.write("<html><head><title>Order "+safe(o.id)+"</title></head><body style='font-family:Arial;padding:25px'>");
+ w.document.write("<h1>SweetTreats — Order Receipt</h1><hr>");
+ w.document.write("<h3>Order ID: "+safe(o.id)+"</h3>");
+ w.document.write("<p>Customer: "+safe(o.name)+"</p><p>Email: "+safe(o.email)+"</p>");
+ w.document.write("<p>Address: "+safe(o.address)+"</p><p>Delivery date: "+safe(o.date)+"</p>");
+ w.document.write("<p>Items: "+o.items.map(i=>safe(i.name)+" ("+safe(i.size)+") × "+i.quantity).join(", ")+"</p>");
+ w.document.write("<h3>Total: ₹"+o.total+"</h3><p>Status: "+safe(o.status)+"</p>");
+ w.document.write("<p>Demonstration receipt only.</p></body></html>");
+ w.document.close();w.focus();w.print();
+}
+function cancelOrder(id){
+ if(!currentUser)return;
+ const o=orders.find(x=>x.id===id&&x.userEmail===currentUser.email);
+ if(!o||o.status==="Cancelled")return;
+ if(confirm("Cancel this order?")){
+  o.status="Cancelled";
+  o.items.forEach(i=>{const p=findProduct(i.productId);if(p)p.stock+=i.quantity;});
+  save("orders",orders);save("products",products);renderOrders();renderProducts();
+  alert("Order cancelled. Inventory updated. No real payment or refund was processed.");
+ }
+}
+
+$("adminLogin").addEventListener("submit",e=>{
+ e.preventDefault();
+ if($("adminPassword").value==="ADMIN123"){
+  adminOpen=true;$("adminContent").classList.remove("hidden");
+  $("adminMessage").textContent="Administrator login successful.";
+  renderAdmin();renderAdminOrders();renderUsers();
+ }else $("adminMessage").textContent="Incorrect admin password.";
+});
+function adminLogout(){adminOpen=false;$("adminContent").classList.add("hidden");$("adminPassword").value="";}
+$("productForm").addEventListener("submit",e=>{
+ e.preventDefault();if(!adminOpen)return;
+ const price=Number($("cakePrice").value),stock=Number($("cakeStock").value);
+ if(price<=0||!Number.isInteger(stock)||stock<0){alert("Enter a valid price and stock quantity.");return;}
+ products.push({id:Date.now(),name:$("cakeName").value.trim(),category:$("cakeCategory").value,flavor:$("cakeFlavor").value,description:$("cakeDescription").value.trim(),price,stock,icon:"🎂"});
+ save("products",products);$("productForm").reset();renderProducts();renderAdmin();
+ alert("Cake added successfully.");
+});
+function renderAdmin(){
+ $("adminProductList").innerHTML=products.map(p=>`
+ <div class="card" style="margin:10px 0">
+ <strong>${safe(p.name)}</strong><p>${safe(p.category)} | ${safe(p.flavor)}</p>
+ <p>Base price: ₹${p.price} | Stock: ${p.stock}</p>
+ <button onclick="editProduct(${p.id})">Edit Price / Stock</button>
+ <button class="danger" onclick="deleteProduct(${p.id})">Delete Cake</button>
+ </div>`).join("");
+}
+function editProduct(id){
+ if(!adminOpen)return;
+ const p=findProduct(id);if(!p)return;
+ const price=prompt("New base price for 0.5 kg:",p.price);if(price===null)return;
+ const stock=prompt("New stock quantity:",p.stock);if(stock===null)return;
+ if(!Number.isFinite(Number(price))||Number(price)<=0||!Number.isInteger(Number(stock))||Number(stock)<0){alert("Invalid price or stock.");return;}
+ p.price=Number(price);p.stock=Number(stock);
+ save("products",products);renderProducts();renderAdmin();
+ alert("Cake details updated.");
+}
+function deleteProduct(id){
+ if(!adminOpen)return;
+ if(orders.some(o=>o.status!=="Cancelled"&&o.items.some(i=>i.productId===id))){alert("Cannot delete a cake included in an active order.");return;}
+ if(confirm("Delete this cake?")){products=products.filter(p=>p.id!==id);save("products",products);renderProducts();renderAdmin();}
+}
+function renderAdminOrders(){
+ $("adminOrderList").innerHTML=orders.length?orders.slice().reverse().map(o=>`
+ <div class="order">
+ <strong>${safe(o.id)} — ${safe(o.name)}</strong>
+ <p>${safe(o.address)} | Delivery: ${safe(o.date)}</p>
+ <p>Total: ₹${o.total} | Status: ${safe(o.status)}</p>
+ <label>Update Delivery Status</label>
+ <select id="status${safe(o.id)}">
+ ${["Order Confirmed","Preparing","Out for Delivery","Delivered","Cancelled"].map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}
+ </select>
+ <button onclick="updateOrderStatus('${o.id}')">Save Status</button>
+ </div>`).join(""):'<p class="notice">No orders available.</p>';
+}
+function updateOrderStatus(id){
+ if(!adminOpen)return;
+ const o=orders.find(x=>x.id===id);if(!o)return;
+ const status=$("status"+id).value;
+ if(status==="Cancelled"&&o.status!=="Cancelled"){
+  o.items.forEach(i=>{const p=findProduct(i.productId);if(p)p.stock+=i.quantity;});
+ }
+ o.status=status;save("orders",orders);save("products",products);
+ renderAdminOrders();renderAdmin();renderOrders();renderProducts();
+ alert("Order status updated.");
+}
+function renderUsers(){
+ $("userReport").innerHTML=users.length?users.map(u=>`<div class="card" style="margin:8px 0">${safe(u.name)} — ${safe(u.email)}</div>`).join(""):"<p>No registered customers.</p>";
+}
+function generateReport(){
+ if(!adminOpen)return;
+ const active=orders.filter(o=>o.status!=="Cancelled");
+ const revenue=active.reduce((s,o)=>s+o.total,0);
+ $("adminReport").innerHTML=`
+ <div class="grid">
+ <div class="card"><h3>Total Orders</h3><p>${orders.length}</p></div>
+ <div class="card"><h3>Active Orders</h3><p>${active.length}</p></div>
+ <div class="card"><h3>Cancelled Orders</h3><p>${orders.length-active.length}</p></div>
+ <div class="card"><h3>Order Value</h3><p>₹${revenue}</p></div>
+ <div class="card"><h3>Products</h3><p>${products.length}</p></div>
+ <div class="card"><h3>Customers</h3><p>${users.length}</p></div>
+ </div>`;
+}
+renderProducts();renderCart();renderOrders();
+</script>
+</body>
+</html>

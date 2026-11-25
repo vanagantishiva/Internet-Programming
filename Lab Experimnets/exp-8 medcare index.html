@@ -1,0 +1,592 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedCare Hospital Appointment System</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#087eaa;--navy:#12354a;--light:#eef8fc;--border:#d9e8ef;--green:#16805d}
+body{font-family:Arial,sans-serif;background:#f7fbfd;color:#203746;line-height:1.6}
+header{background:white;padding:15px 5%;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
+.logo{font-size:25px;font-weight:bold;color:var(--blue)}
+.logo span{color:var(--navy)}
+nav{display:flex;gap:5px;flex-wrap:wrap}
+button,.btn{border:0;border-radius:7px;padding:10px 14px;background:var(--blue);color:white;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-block}
+button:hover,.btn:hover{opacity:.85}
+nav button{background:white;color:var(--navy);padding:8px}
+nav button:hover{background:var(--light)}
+.container{width:92%;max-width:1200px;margin:28px auto}
+.hidden{display:none!important}
+.hero{background:linear-gradient(120deg,#dff4fc,#f4fbff);padding:38px;border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.2;color:var(--navy);margin:12px 0}
+.hero p{max-width:650px;margin-bottom:18px}
+.hero-icon{font-size:85px}
+section{margin:30px 0}
+h2{margin-bottom:16px;color:var(--navy)}
+h3{margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card,.panel{background:white;border:1px solid var(--border);border-radius:12px;padding:19px;box-shadow:0 4px 14px #19394b08}
+.card .emoji{font-size:40px}
+.card p{margin:5px 0}
+.tag{display:inline-block;background:#e2f5ed;color:#126b4f;padding:3px 9px;border-radius:20px;font-size:12px}
+.price{font-size:19px;font-weight:bold;color:var(--blue);margin:8px 0}
+.small{font-size:13px;color:#617784}
+form{display:grid;gap:12px}
+label{font-size:14px;font-weight:bold}
+input,select,textarea{width:100%;padding:11px;border:1px solid #cbdde6;border-radius:7px;font:inherit;background:white;color:#203746}
+textarea{resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.secondary{background:#e6f0f5;color:var(--navy)}
+.danger{background:#bd3545}
+.success{background:var(--green)}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:650px}
+th,td{text-align:left;padding:11px;border-bottom:1px solid var(--border);font-size:13px}
+th{background:var(--light)}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+footer{margin-top:45px;padding:25px;text-align:center;background:var(--navy);color:white}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:white;padding:14px 20px;border-radius:8px;display:none;z-index:10;max-width:90%}
+@media(max-width:650px){header{position:static}.container{width:95%}.hero{padding:25px}.hero-icon{font-size:55px}.two{grid-template-columns:1fr}nav button{font-size:12px;padding:7px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">✚ <span>MedCare</span></div>
+ <nav>
+  <button onclick="page('home')">Home</button>
+  <button onclick="page('doctors')">Find Doctors</button>
+  <button onclick="page('book')">Book Appointment</button>
+  <button onclick="page('patient')">Patient Account</button>
+  <button onclick="page('checkin')">Check-in</button>
+  <button onclick="page('reviews')">Reviews</button>
+  <button onclick="page('hospital')">Hospital Portal</button>
+  <button onclick="page('admin')">Admin</button>
+  <button onclick="logout()">Logout</button>
+ </nav>
+</header>
+
+<main class="container">
+<!-- HOME -->
+<div id="home" class="page">
+ <div class="hero">
+  <div>
+   <span class="tag">YOUR HEALTH, OUR PRIORITY</span>
+   <h1>Healthcare made<br>simple with MedCare.</h1>
+   <p>Search hospitals, find doctors by specialty and location, and book appointments at a convenient date and time.</p>
+   <button onclick="page('doctors')">Find a Doctor</button>
+   <button class="secondary" onclick="page('auth')">Patient Login / Sign Up</button>
+  </div>
+  <div class="hero-icon">🏥</div>
+ </div>
+ <section>
+  <h2>Our Services</h2>
+  <div class="grid">
+   <div class="card"><div class="emoji">🩺</div><h3>Find Doctors</h3><p>Browse specialists and hospital details.</p><button onclick="page('doctors')">Search Now</button></div>
+   <div class="card"><div class="emoji">📅</div><h3>Online Booking</h3><p>Choose your preferred appointment slot.</p><button onclick="page('book')">Book Now</button></div>
+   <div class="card"><div class="emoji">📋</div><h3>Patient Check-in</h3><p>Submit a check-in form for your booking.</p><button onclick="page('checkin')">Check In</button></div>
+   <div class="card"><div class="emoji">⭐</div><h3>Patient Reviews</h3><p>Read feedback and rate your experience.</p><button onclick="page('reviews')">View Reviews</button></div>
+  </div>
+ </section>
+ <section>
+  <h2>Hospitals</h2>
+  <div id="homeHospitals" class="grid"></div>
+ </section>
+ <section class="panel">
+  <h2>How It Works</h2>
+  <p>1. Register or log in. &nbsp; 2. Search for a doctor. &nbsp; 3. Select a hospital, date and time. &nbsp; 4. Confirm your appointment. &nbsp; 5. Check in and view your booking history.</p>
+ </section>
+</div>
+
+<!-- AUTHENTICATION -->
+<div id="auth" class="page hidden">
+ <h2>Patient Registration and Login</h2>
+ <div class="grid">
+  <div class="panel">
+   <h3>Create Patient Account</h3>
+   <form id="signupForm">
+    <label>Full Name</label><input id="suName" required>
+    <label>Email</label><input id="suEmail" type="email" required>
+    <label>Phone Number</label><input id="suPhone" type="tel" required>
+    <label>Password</label><input id="suPassword" type="password" minlength="6" required>
+    <button type="submit">Register</button>
+   </form>
+  </div>
+  <div class="panel">
+   <h3>Patient Login</h3>
+   <form id="loginForm">
+    <label>Email</label><input id="liEmail" type="email" required>
+    <label>Password</label><input id="liPassword" type="password" required>
+    <button type="submit">Login</button>
+   </form>
+   <p class="small">Demo only: credentials are stored locally and are not securely authenticated.</p>
+  </div>
+ </div>
+</div>
+
+<!-- DOCTORS -->
+<div id="doctors" class="page hidden">
+ <h2>Find a Doctor or Hospital</h2>
+ <div class="panel">
+  <div class="two">
+   <div><label>Search by doctor, specialty or hospital</label><input id="searchText" placeholder="e.g. cardiology, Dr. Ananya"></div>
+   <div><label>Location</label><input id="searchLocation" placeholder="e.g. Chennai"></div>
+  </div>
+  <div class="two" style="margin-top:12px">
+   <div><label>Specialty</label><select id="searchSpecialty"><option value="">All specialties</option></select></div>
+   <div style="display:flex;align-items:end;gap:8px"><button onclick="renderDoctors()">Search</button><button class="secondary" onclick="clearSearch()">Clear</button></div>
+  </div>
+ </div>
+ <section><h2>Available Doctors</h2><div id="doctorList" class="grid"></div></section>
+ <section><h2>Hospital Directory</h2><div id="hospitalList" class="grid"></div></section>
+</div>
+
+<!-- BOOK APPOINTMENT -->
+<div id="book" class="page hidden">
+ <h2>Book an Appointment</h2>
+ <div class="panel">
+  <p class="small">Select a doctor, hospital, date and available time. This demo uses sample data only.</p>
+  <form id="bookingForm">
+   <div class="two">
+    <div><label>Patient Name</label><input id="bName" required></div>
+    <div><label>Email Address</label><input id="bEmail" type="email" required></div>
+   </div>
+   <div class="two">
+    <div><label>Phone Number</label><input id="bPhone" type="tel" required></div>
+    <div><label>Doctor</label><select id="bDoctor" required></select></div>
+   </div>
+   <div class="two">
+    <div><label>Hospital</label><select id="bHospital" required></select></div>
+    <div><label>Specialty</label><input id="bSpecialty" readonly></div>
+   </div>
+   <div class="two">
+    <div><label>Appointment Date</label><input id="bDate" type="date" required></div>
+    <div><label>Available Time</label><select id="bTime" required><option value="">Choose a date first</option></select></div>
+   </div>
+   <div><label>Reason for Visit (optional)</label><textarea id="bReason" rows="3" placeholder="Brief reason for the appointment; do not enter sensitive medical information in this demo."></textarea></div>
+   <button type="submit">Confirm Appointment</button>
+  </form>
+ </div>
+</div>
+
+<!-- PATIENT DASHBOARD -->
+<div id="patient" class="page hidden">
+ <h2>Patient Dashboard</h2>
+ <div class="panel">
+  <div class="row"><div><h3 id="patientWelcome">Welcome</h3><p class="small">Manage your profile and appointments.</p></div><button onclick="page('auth')">Login / Register</button></div>
+  <hr>
+  <h3>Update Personal Details</h3>
+  <form id="profileForm">
+   <label>Full Name</label><input id="pName" required>
+   <div class="two"><div><label>Email</label><input id="pEmail" type="email" required></div><div><label>Phone</label><input id="pPhone" required></div></div>
+   <button type="submit">Save Profile</button>
+  </form>
+ </div>
+ <section><h2>Upcoming Appointments</h2><div id="patientUpcoming" class="grid"></div></section>
+ <section><h2>Past Appointments and History</h2><div id="patientHistory" class="grid"></div></section>
+</div>
+
+<!-- CHECK-IN -->
+<div id="checkin" class="page hidden">
+ <h2>Appointment Check-in</h2>
+ <div class="panel">
+  <p class="small">Enter the appointment ID shown on your booking confirmation.</p>
+  <form id="checkinForm">
+   <label>Appointment ID</label><input id="checkinId" required>
+   <label>Patient Email</label><input id="checkinEmail" type="email" required>
+   <div class="two">
+    <div><label>Arrival Status</label><select id="arrival"><option>Arrived</option><option>Running late</option></select></div>
+    <div><label>Visit Confirmation</label><select id="confirmVisit"><option>Appointment confirmed</option><option>Need assistance</option></select></div>
+   </div>
+   <label>Additional Notes (optional)</label><textarea id="checkinNotes" rows="3"></textarea>
+   <button type="submit">Submit Check-in</button>
+  </form>
+ </div>
+ <section><h2>My Check-in History</h2><div id="checkinHistory" class="grid"></div></section>
+</div>
+
+<!-- REVIEWS -->
+<div id="reviews" class="page hidden">
+ <h2>Doctor Ratings and Reviews</h2>
+ <div class="panel">
+  <form id="reviewForm">
+   <label>Your Name</label><input id="rName" required>
+   <label>Doctor</label><select id="rDoctor" required></select>
+   <label>Rating</label><select id="rRating"><option value="5">★★★★★ - Excellent</option><option value="4">★★★★ - Very good</option><option value="3">★★★ - Good</option><option value="2">★★ - Fair</option><option value="1">★ - Poor</option></select>
+   <label>Feedback</label><textarea id="rText" required rows="3"></textarea>
+   <button type="submit">Submit Review</button>
+  </form>
+ </div>
+ <section><h2>Patient Feedback</h2><div id="reviewList" class="grid"></div></section>
+</div>
+
+<!-- HOSPITAL PORTAL -->
+<div id="hospital" class="page hidden">
+ <h2>Hospital Registration and Management</h2>
+ <div class="grid">
+  <div class="panel">
+   <h3>Hospital Registration / Login</h3>
+   <form id="hospitalAuthForm">
+    <label>Hospital Name</label><input id="hName" required>
+    <label>Location / Address</label><input id="hLocation" required>
+    <label>Contact Number</label><input id="hPhone" required>
+    <label>Contact Email</label><input id="hEmail" type="email" required>
+    <label>Demo Password</label><input id="hPassword" type="password" minlength="4" required>
+    <button type="submit">Register / Login Hospital</button>
+   </form>
+   <p class="small">For this demo, the hospital name is the login identifier. Real hospital accounts need verified identity and secure authentication.</p>
+  </div>
+  <div class="panel">
+   <h3>Update Hospital Details</h3>
+   <form id="hospitalUpdateForm">
+    <label>Hospital Name</label><input id="uhName" required>
+    <label>Location / Address</label><input id="uhLocation" required>
+    <label>Contact Number</label><input id="uhPhone" required>
+    <label>Contact Email</label><input id="uhEmail" type="email" required>
+    <button type="submit">Update Details</button>
+   </form>
+   <p class="small" id="hospitalSession">No hospital session active.</p>
+  </div>
+ </div>
+ <section><h2>Hospital Appointment List</h2><div id="hospitalAppointments" class="table-wrap"></div></section>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="page hidden">
+ <h2>Administrator Dashboard</h2>
+ <div id="adminLogin" class="panel">
+  <form id="adminLoginForm">
+   <label>Admin Password</label><input id="adminPassword" type="password" required>
+   <button type="submit">Admin Login</button>
+  </form>
+  <p class="small">Demo admin password: <b>MEDCARE123</b>. This is not secure authentication.</p>
+ </div>
+ <div id="adminPanel" class="hidden">
+  <div id="stats" class="grid"></div>
+  <section><h3>Manage Appointments</h3><div id="adminBookings" class="table-wrap"></div></section>
+  <section><h3>Manage Doctors</h3><div id="adminDoctors" class="grid"></div></section>
+  <section>
+   <h3>Add Doctor</h3>
+   <form id="doctorForm" class="panel">
+    <label>Doctor Name</label><input id="newDoctor" required>
+    <div class="two"><div><label>Specialty</label><input id="newSpecialty" required></div><div><label>Hospital</label><select id="newHospital"></select></div></div>
+    <label>Consultation Fee (₹)</label><input id="newFee" type="number" min="0" required>
+    <button type="submit">Add Doctor</button>
+   </form>
+  </section>
+  <section><h3>Hospital Directory</h3><div id="adminHospitals" class="grid"></div></section>
+  <section><h3>Rating Statistics</h3><div id="ratingStats" class="panel"></div></section>
+  <button class="danger" onclick="adminLogout()">Logout Admin</button>
+ </div>
+</div>
+</main>
+
+<footer>© 2026 MedCare Hospital | Online Appointment Booking System</footer>
+<div id="toast"></div>
+
+<script>
+const initialHospitals=[
+ {id:1,name:"MedCare Central Hospital",location:"Chennai",phone:"044-40000000",email:"central@example.com"},
+ {id:2,name:"City Health Hospital",location:"Tambaram, Chennai",phone:"044-40000001",email:"city@example.com"},
+ {id:3,name:"Sunrise Multi-Speciality Hospital",location:"Velachery, Chennai",phone:"044-40000002",email:"sunrise@example.com"}
+];
+const initialDoctors=[
+ {id:1,name:"Dr. Ananya Sharma",specialty:"Cardiology",hospitalId:1,fee:700},
+ {id:2,name:"Dr. Rahul Kumar",specialty:"Dermatology",hospitalId:2,fee:500},
+ {id:3,name:"Dr. Priya Nair",specialty:"Pediatrics",hospitalId:1,fee:600},
+ {id:4,name:"Dr. Arjun Rao",specialty:"Orthopedics",hospitalId:3,fee:650},
+ {id:5,name:"Dr. Meera Iyer",specialty:"General Medicine",hospitalId:2,fee:400},
+ {id:6,name:"Dr. Vikram Das",specialty:"Neurology",hospitalId:3,fee:900}
+];
+function load(key,defaults){try{const x=localStorage.getItem(key);return x?JSON.parse(x):JSON.parse(JSON.stringify(defaults));}catch(e){return JSON.parse(JSON.stringify(defaults));}}
+let hospitals=load("mc_hospitals",initialHospitals);
+let doctors=load("mc_doctors",initialDoctors);
+let appointments=load("mc_appointments",[]);
+let patients=load("mc_patients",[]);
+let reviews=load("mc_reviews",[]);
+let checkins=load("mc_checkins",[]);
+let currentEmail="";
+let currentHospitalId=null;
+let adminOn=false;
+
+function persist(){
+ try{
+  localStorage.setItem("mc_hospitals",JSON.stringify(hospitals));
+  localStorage.setItem("mc_doctors",JSON.stringify(doctors));
+  localStorage.setItem("mc_appointments",JSON.stringify(appointments));
+  localStorage.setItem("mc_patients",JSON.stringify(patients));
+  localStorage.setItem("mc_reviews",JSON.stringify(reviews));
+  localStorage.setItem("mc_checkins",JSON.stringify(checkins));
+ }catch(e){notify("Unable to save data in browser storage.");}
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function notify(s){const t=document.getElementById("toast");t.textContent=s;t.style.display="block";setTimeout(()=>t.style.display="none",3000);}
+function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function money(n){return "₹"+Number(n||0).toLocaleString("en-IN");}
+function hospitalById(id){return hospitals.find(h=>h.id===Number(id));}
+function doctorById(id){return doctors.find(d=>d.id===Number(id));}
+function page(id){
+ document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+ if(id==="patient")renderPatient();
+ if(id==="checkin")renderCheckinHistory();
+ if(id==="reviews")renderReviews();
+ if(id==="hospital")renderHospitalPortal();
+ if(id==="admin"&&adminOn)renderAdmin();
+ if(id==="doctors")renderDoctors();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function doctorName(id){const d=doctorById(id);return d?d.name:"Doctor unavailable";}
+function hospitalName(id){const h=hospitalById(id);return h?h.name:"Hospital unavailable";}
+function mapUrl(location){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(location);}
+function selectOptions(){
+ const oldDoctor=document.getElementById("bDoctor").value;
+ const oldHospital=document.getElementById("bHospital").value;
+ const doc=doctors.map(d=>`<option value="${d.id}">${esc(d.name)} — ${esc(d.specialty)}</option>`).join("");
+ document.getElementById("bDoctor").innerHTML=doc;
+ document.getElementById("rDoctor").innerHTML=doc;
+ document.getElementById("newDoctor").value="";
+ document.getElementById("newHospital").innerHTML=hospitals.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join("");
+ document.getElementById("bHospital").innerHTML=hospitals.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join("");
+ if(oldDoctor&&doctorById(oldDoctor))document.getElementById("bDoctor").value=oldDoctor;
+ if(oldHospital&&hospitalById(oldHospital))document.getElementById("bHospital").value=oldHospital;
+ const specs=[...new Set(doctors.map(d=>d.specialty))].sort();
+ document.getElementById("searchSpecialty").innerHTML='<option value="">All specialties</option>'+specs.map(s=>`<option>${esc(s)}</option>`).join("");
+}
+function renderHospitals(){
+ const html=hospitals.map(h=>`<div class="card">
+ <div class="emoji">🏥</div><h3>${esc(h.name)}</h3><p>📍 ${esc(h.location)}</p><p>☎ ${esc(h.phone)}</p>
+ <p class="small">${esc(h.email)}</p>
+ <a class="btn" href="${mapUrl(h.name+" "+h.location)}" target="_blank" rel="noopener">View Map</a>
+ <button onclick="bookAtHospital(${h.id})">Book Here</button>
+ </div>`).join("")||"<p>No hospitals available.</p>";
+ document.getElementById("homeHospitals").innerHTML=html;
+ document.getElementById("hospitalList").innerHTML=html;
+}
+function bookAtHospital(id){page("book");document.getElementById("bHospital").value=id;}
+function renderDoctors(){
+ const q=document.getElementById("searchText").value.toLowerCase().trim();
+ const loc=document.getElementById("searchLocation").value.toLowerCase().trim();
+ const spec=document.getElementById("searchSpecialty").value;
+ const filtered=doctors.filter(d=>{
+ const h=hospitalById(d.hospitalId);
+ return (!q||(d.name+" "+d.specialty+" "+(h?h.name:"")).toLowerCase().includes(q))&&
+ (!loc||(h&&h.location.toLowerCase().includes(loc)))&&(!spec||d.specialty===spec);
+ });
+ document.getElementById("doctorList").innerHTML=filtered.map(d=>{
+ const h=hospitalById(d.hospitalId);
+ const ratings=reviews.filter(r=>r.doctorId===d.id);
+ const avg=ratings.length?(ratings.reduce((a,r)=>a+r.rating,0)/ratings.length).toFixed(1):"No ratings";
+ return `<div class="card"><div class="emoji">🩺</div><h3>${esc(d.name)}</h3>
+ <p><span class="tag">${esc(d.specialty)}</span></p><p>${esc(h?h.name:"Hospital unavailable")}</p>
+ <p>📍 ${esc(h?h.location:"")}</p><p>Consultation fee: <b>${money(d.fee)}</b></p>
+ <p>⭐ ${avg} (${ratings.length} reviews)</p>
+ <button onclick="startBooking(${d.id})">Book Appointment</button>
+ ${h?`<a class="btn" href="${mapUrl(h.name+" "+h.location)}" target="_blank" rel="noopener">Hospital Map</a>`:""}
+ </div>`;
+ }).join("")||"<p>No doctors match your search. Try another specialty or location.</p>";
+ renderHospitals();
+}
+function clearSearch(){
+ document.getElementById("searchText").value="";
+ document.getElementById("searchLocation").value="";
+ document.getElementById("searchSpecialty").value="";
+ renderDoctors();
+}
+function startBooking(id){page("book");document.getElementById("bDoctor").value=id;syncDoctor();}
+function syncDoctor(){
+ const d=doctorById(document.getElementById("bDoctor").value);
+ if(d){document.getElementById("bSpecialty").value=d.specialty;document.getElementById("bHospital").value=d.hospitalId;}
+ updateSlots();
+}
+document.getElementById("bDoctor").addEventListener("change",syncDoctor);
+document.getElementById("bHospital").addEventListener("change",updateSlots);
+document.getElementById("bDate").min=today();
+document.getElementById("bDate").addEventListener("change",updateSlots);
+function slotList(){return ["09:00","10:00","11:00","12:00","14:00","15:00","16:00"];}
+function updateSlots(){
+ const date=document.getElementById("bDate").value;
+ const docId=Number(document.getElementById("bDoctor").value);
+ const hid=Number(document.getElementById("bHospital").value);
+ const sel=document.getElementById("bTime");
+ if(!date){sel.innerHTML='<option value="">Choose a date first</option>';return;}
+ if(date<today()){sel.innerHTML='<option value="">Choose a future date</option>';return;}
+ const available=slotList().filter(t=>!appointments.some(a=>a.date===date&&a.time===t&&a.doctorId===docId&&a.hospitalId===hid&&a.status!=="Cancelled"));
+ sel.innerHTML='<option value="">Select time</option>'+available.map(t=>`<option value="${t}">${t}</option>`).join("");
+ if(!available.length)sel.innerHTML='<option value="">No slots available</option>';
+}
+function slotValid(date,time,doctorId,hospitalId,excludeId=null){
+ return date>=today()&&slotList().includes(time)&&!!doctorById(doctorId)&&!!hospitalById(hospitalId)&&
+ !appointments.some(a=>a.date===date&&a.time===time&&a.doctorId===Number(doctorId)&&a.hospitalId===Number(hospitalId)&&a.status!=="Cancelled"&&a.id!==excludeId);
+}
+document.getElementById("bookingForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const email=document.getElementById("bEmail").value.trim().toLowerCase();
+ const data={id:Date.now(),name:document.getElementById("bName").value.trim(),email,phone:document.getElementById("bPhone").value.trim(),doctorId:Number(document.getElementById("bDoctor").value),hospitalId:Number(document.getElementById("bHospital").value),date:document.getElementById("bDate").value,time:document.getElementById("bTime").value,reason:document.getElementById("bReason").value.trim(),status:"Confirmed",created:new Date().toISOString()};
+ if(!slotValid(data.date,data.time,data.doctorId,data.hospitalId)){notify("This appointment slot is unavailable. Select another time.");return;}
+ appointments.push(data);persist();
+ currentEmail=email;
+ const p=patients.find(x=>x.email===email);
+ if(p){p.name=data.name;p.phone=data.phone;}else patients.push({name:data.name,email,phone:data.phone,password:""});
+ persist();
+ document.getElementById("profileForm").reset();
+ document.getElementById("pName").value=data.name;document.getElementById("pEmail").value=email;document.getElementById("pPhone").value=data.phone;
+ document.getElementById("accountPlaceholder");
+ e.target.reset();document.getElementById("bDate").min=today();syncDoctor();
+ notify("Appointment booked! Your appointment ID is "+data.id);
+ page("patient");
+});
+function appointmentCard(a){
+ const d=doctorById(a.doctorId),h=hospitalById(a.hospitalId);
+ const past=a.date<today()||a.status==="Completed"||a.status==="Cancelled";
+ return `<div class="card"><div class="row"><span class="tag">${esc(a.status)}</span><span class="small">ID: ${a.id}</span></div>
+ <h3>${esc(d?d.name:"Doctor")}</h3><p>${esc(d?d.specialty:"")}</p>
+ <p>🏥 ${esc(h?h.name:"Hospital")}</p><p>📅 ${esc(a.date)} at ${esc(a.time)}</p>
+ <p>📍 ${esc(h?h.location:"")}</p>
+ ${h?`<a href="${mapUrl(h.name+" "+h.location)}" target="_blank" rel="noopener">Open Hospital Map</a>`:""}
+ ${!past&&a.status!=="Cancelled"?`<hr><button class="secondary" onclick="reschedule(${a.id})">Reschedule</button> <button class="danger" onclick="cancelAppointment(${a.id})">Cancel</button>`:""}
+ <p class="small">Check-in: ${a.checkedIn?"Submitted":"Not submitted"}</p>
+ </div>`;
+}
+function renderPatient(){
+ if(!currentEmail){document.getElementById("patientWelcome").textContent="Welcome, Patient";document.getElementById("patientUpcoming").innerHTML='<p>Book an appointment or use the account lookup below.</p>';document.getElementById("patientHistory").innerHTML='<button onclick="page(\'auth\')">Login / Register</button>';return;}
+ const p=patients.find(x=>x.email===currentEmail)||{};
+ document.getElementById("patientWelcome").textContent="Welcome, "+(p.name||currentEmail);
+ document.getElementById("pName").value=p.name||"";
+ document.getElementById("pEmail").value=p.email||currentEmail;
+ document.getElementById("pPhone").value=p.phone||"";
+ const mine=appointments.filter(a=>a.email===currentEmail).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ const upcoming=mine.filter(a=>a.date>=today()&&a.status!=="Cancelled"&&a.status!=="Completed");
+ const history=mine.filter(a=>!upcoming.includes(a));
+ document.getElementById("patientUpcoming").innerHTML=upcoming.map(appointmentCard).join("")||"<p>No upcoming appointments.</p>";
+ document.getElementById("patientHistory").innerHTML=history.map(appointmentCard).join("")||"<p>No past appointments.</p>";
+}
+document.getElementById("profileForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const email=document.getElementById("pEmail").value.trim().toLowerCase();
+ const name=document.getElementById("pName").value.trim();
+ const phone=document.getElementById("pPhone").value.trim();
+ let p=patients.find(x=>x.email===currentEmail||x.email===email);
+ if(p){const old=p.email;p.name=name;p.email=email;p.phone=phone;appointments.filter(a=>a.email===old).forEach(a=>a.email=email);}
+ else patients.push({name,email,phone,password:""});
+ currentEmail=email;persist();renderPatient();notify("Profile updated.");
+});
+function cancelAppointment(id){
+ const a=appointments.find(x=>x.id===id);
+ if(!a||a.email!==currentEmail)return;
+ if(!confirm("Cancel this appointment?"))return;
+ a.status="Cancelled";persist();renderPatient();renderAdmin();notify("Appointment cancelled.");
+}
+function reschedule(id){
+ const a=appointments.find(x=>x.id===id);
+ if(!a||a.email!==currentEmail)return;
+ const date=prompt("New date (YYYY-MM-DD):",a.date);if(!date)return;
+ const time=prompt("New time ("+slotList().join(", ")+"):",a.time);if(!time)return;
+ if(!slotValid(date,time,a.doctorId,a.hospitalId,a.id)){notify("That slot is not available.");return;}
+ a.date=date;a.time=time;a.status="Confirmed";persist();renderPatient();notify("Appointment rescheduled.");
+}
+document.getElementById("signupForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const email=document.getElementById("suEmail").value.trim().toLowerCase();
+ if(patients.some(p=>p.email===email)){notify("An account with this email already exists.");return;}
+ patients.push({name:document.getElementById("suName").value.trim(),email,phone:document.getElementById("suPhone").value.trim(),password:document.getElementById("suPassword").value});
+ persist();currentEmail=email;e.target.reset();renderPatient();page("patient");notify("Registration successful.");
+});
+document.getElementById("loginForm").addEventListener("submit",e=>{
+ e.preventDefault();const email=document.getElementById("liEmail").value.trim().toLowerCase(),pw=document.getElementById("liPassword").value;
+ const p=patients.find(p=>p.email===email&&p.password===pw);
+ if(!p){notify("Invalid login details. Please register or check your credentials.");return;}
+ currentEmail=email;e.target.reset();renderPatient();page("patient");notify("Login successful.");
+});
+function logout(){currentEmail="";notify("Patient session ended.");}
+document.getElementById("checkinForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const id=Number(document.getElementById("checkinId").value);
+ const email=document.getElementById("checkinEmail").value.trim().toLowerCase();
+ const a=appointments.find(x=>x.id===id&&x.email===email&&x.status==="Confirmed");
+ if(!a){notify("No confirmed appointment found for this ID and email.");return;}
+ const c={id:Date.now(),appointmentId:id,email,date:today(),arrival:document.getElementById("arrival").value,confirmation:document.getElementById("confirmVisit").value,notes:document.getElementById("checkinNotes").value.trim()};
+ checkins.push(c);a.checkedIn=true;persist();e.target.reset();renderCheckinHistory();notify("Check-in form submitted.");
+});
+function renderCheckinHistory(){
+ const email=currentEmail||document.getElementById("checkinEmail").value.trim().toLowerCase();
+ const list=checkins.filter(c=>c.email===email);
+ document.getElementById("checkinHistory").innerHTML=list.map(c=>`<div class="card"><h3>Appointment ID: ${c.appointmentId}</h3><p>${esc(c.date)} — ${esc(c.arrival)}</p><p>${esc(c.confirmation)}</p></div>`).join("")||"<p>No check-in records found for the current patient.</p>";
+}
+document.getElementById("reviewForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ reviews.unshift({id:Date.now(),name:document.getElementById("rName").value.trim(),doctorId:Number(document.getElementById("rDoctor").value),rating:Number(document.getElementById("rRating").value),text:document.getElementById("rText").value.trim(),date:today()});
+ persist();e.target.reset();renderReviews();renderDoctors();notify("Thank you for your feedback.");
+});
+function renderReviews(){
+ document.getElementById("reviewList").innerHTML=reviews.map(r=>`<div class="card"><h3>${esc(doctorName(r.doctorId))}</h3><p>By ${esc(r.name)}</p><p style="color:#e4a51a">${"★".repeat(r.rating)}${"☆".repeat(5-r.rating)}</p><p>${esc(r.text)}</p><p class="small">${esc(r.date)}</p></div>`).join("")||"<p>No reviews have been submitted yet.</p>";
+}
+document.getElementById("hospitalAuthForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const name=document.getElementById("hName").value.trim();
+ const location=document.getElementById("hLocation").value.trim();
+ const phone=document.getElementById("hPhone").value.trim();
+ const email=document.getElementById("hEmail").value.trim().toLowerCase();
+ let h=hospitals.find(x=>x.name.toLowerCase()===name.toLowerCase());
+ if(!h){h={id:Date.now(),name,location,phone,email};hospitals.push(h);notify("Hospital registered in demo mode.");}
+ else{h.location=location;h.phone=phone;h.email=email;notify("Hospital details loaded and updated.");}
+ currentHospitalId=h.id;persist();selectOptions();renderHospitals();renderHospitalPortal();renderDoctors();
+});
+document.getElementById("hospitalUpdateForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(!currentHospitalId){notify("Register or select your hospital first.");return;}
+ const h=hospitalById(currentHospitalId);if(!h)return;
+ h.name=document.getElementById("uhName").value.trim();h.location=document.getElementById("uhLocation").value.trim();h.phone=document.getElementById("uhPhone").value.trim();h.email=document.getElementById("uhEmail").value.trim().toLowerCase();
+ persist();selectOptions();renderHospitals();renderDoctors();renderHospitalPortal();notify("Hospital details updated.");
+});
+function renderHospitalPortal(){
+ const h=hospitalById(currentHospitalId);
+ document.getElementById("hospitalSession").textContent=h?"Active demo session: "+h.name:"No hospital session active.";
+ if(h){document.getElementById("uhName").value=h.name;document.getElementById("uhLocation").value=h.location;document.getElementById("uhPhone").value=h.phone;document.getElementById("uhEmail").value=h.email;}
+ const list=appointments.filter(a=>currentHospitalId&&a.hospitalId===currentHospitalId);
+ document.getElementById("hospitalAppointments").innerHTML=list.length?`<table><tr><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Status</th></tr>${list.map(a=>`<tr><td>${esc(a.name)}</td><td>${esc(doctorName(a.doctorId))}</td><td>${esc(a.date)}</td><td>${esc(a.time)}</td><td>${esc(a.status)}</td></tr>`).join("")}</table>`:"<p>No hospital appointments to display.</p>";
+}
+document.getElementById("adminLoginForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(document.getElementById("adminPassword").value==="MEDCARE123"){
+ adminOn=true;document.getElementById("adminLogin").classList.add("hidden");document.getElementById("adminPanel").classList.remove("hidden");renderAdmin();notify("Admin demo login successful.");
+ }else notify("Incorrect admin password.");
+});
+function adminLogout(){adminOn=false;document.getElementById("adminLogin").classList.remove("hidden");document.getElementById("adminPanel").classList.add("hidden");document.getElementById("adminPassword").value="";}
+function renderAdmin(){
+ if(!adminOn)return;
+ const confirmed=appointments.filter(a=>a.status==="Confirmed").length;
+ document.getElementById("stats").innerHTML=`
+ <div class="card"><h3>Total Appointments</h3><p class="price">${appointments.length}</p></div>
+ <div class="card"><h3>Confirmed</h3><p class="price">${confirmed}</p></div>
+ <div class="card"><h3>Hospitals</h3><p class="price">${hospitals.length}</p></div>
+ <div class="card"><h3>Doctors</h3><p class="price">${doctors.length}</p></div>`;
+ document.getElementById("adminBookings").innerHTML=appointments.length?`<table><tr><th>ID</th><th>Patient</th><th>Doctor / Hospital</th><th>Date & Time</th><th>Status</th><th>Action</th></tr>${appointments.map(a=>`<tr><td>${a.id}</td><td>${esc(a.name)}<br>${esc(a.email)}<br>${esc(a.phone)}</td><td>${esc(doctorName(a.doctorId))}<br>${esc(hospitalName(a.hospitalId))}</td><td>${esc(a.date)} ${esc(a.time)}</td><td><select onchange="adminStatus(${a.id},this.value)">${["Confirmed","Completed","Cancelled"].map(s=>`<option ${a.status===s?"selected":""}>${s}</option>`).join("")}</select></td><td><button class="danger" onclick="adminDelete(${a.id})">Delete</button></td></tr>`).join("")}</table>`:"<p>No appointments yet.</p>";
+ document.getElementById("adminDoctors").innerHTML=doctors.map(d=>`<div class="card"><h3>${esc(d.name)}</h3><p>${esc(d.specialty)}</p><p>${esc(hospitalName(d.hospitalId))}</p><p>Fee: ${money(d.fee)}</p><button class="danger" onclick="deleteDoctor(${d.id})">Remove Doctor</button></div>`).join("");
+ document.getElementById("adminHospitals").innerHTML=hospitals.map(h=>`<div class="card"><h3>${esc(h.name)}</h3><p>${esc(h.location)}</p><p>${esc(h.phone)}</p><a target="_blank" rel="noopener" href="${mapUrl(h.name+" "+h.location)}">View Map</a></div>`).join("");
+ const avg=reviews.length?(reviews.reduce((n,r)=>n+r.rating,0)/reviews.length).toFixed(1):"N/A";
+ document.getElementById("ratingStats").innerHTML=`<h3>Total Reviews: ${reviews.length}</h3><p>Average Rating: ⭐ ${avg} / 5</p><p class="small">Ratings are calculated from submitted demonstration feedback.</p>`;
+}
+function adminStatus(id,status){const a=appointments.find(x=>x.id===id);if(a){a.status=status;persist();renderAdmin();renderPatient();renderHospitalPortal();}}
+function adminDelete(id){if(!confirm("Delete this appointment record?"))return;appointments=appointments.filter(a=>a.id!==id);persist();renderAdmin();notify("Appointment record deleted.");}
+document.getElementById("doctorForm").addEventListener("submit",e=>{
+ e.preventDefault();
+ const hId=Number(document.getElementById("newHospital").value);
+ doctors.push({id:Date.now(),name:document.getElementById("newDoctor").value.trim(),specialty:document.getElementById("newSpecialty").value.trim(),hospitalId:hId,fee:Number(document.getElementById("newFee").value)});
+ persist();selectOptions();renderDoctors();renderAdmin();e.target.reset();notify("Doctor added successfully.");
+});
+function deleteDoctor(id){if(!confirm("Remove this doctor from the directory?"))return;doctors=doctors.filter(d=>d.id!==id);persist();selectOptions();renderDoctors();renderAdmin();notify("Doctor removed.");}
+
+// Initial setup
+selectOptions();
+renderHospitals();
+renderDoctors();
+renderReviews();
+renderPatient();
+renderHospitalPortal();
+document.getElementById("bDate").min=today();
+</script>
+</body>
+</html>

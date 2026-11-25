@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartLib - Library Management System</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f4f7fb;color:#263449}
+header{background:#17365d;color:white;padding:18px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+header h1{font-size:27px}
+nav{display:flex;gap:13px;flex-wrap:wrap}
+nav a{color:white;text-decoration:none;font-size:14px;font-weight:bold}
+nav a:hover{color:#9de0ff}
+.hero{background:linear-gradient(120deg,#dbeafe,#eff6ff);padding:55px 15px;text-align:center}
+.hero h2{font-size:35px;color:#17365d;margin-bottom:12px}
+.hero p{margin-bottom:20px}
+button{background:#2563a6;color:white;border:0;border-radius:6px;padding:10px 14px;cursor:pointer;margin:3px}
+button:hover{background:#174779}
+.secondary{background:#64748b}.danger{background:#c0392b}
+section{padding:35px 5%}
+.title{text-align:center;color:#17365d;margin-bottom:24px}
+.cards,.books{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px}
+.card,.book,.panel{background:white;padding:20px;border-radius:10px;box-shadow:0 3px 12px #00000010}
+.card{text-align:center}.emoji{font-size:38px;margin-bottom:10px}
+.card h3,.book h3,.panel h3{color:#17365d;margin:10px 0}
+.book p{font-size:14px;line-height:1.6;margin:5px 0}
+.book .cover{font-size:55px;text-align:center;padding:20px;background:#e8f0fc;border-radius:8px}
+.panel{max-width:900px;margin:auto}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:6px;margin:6px 0 12px}
+label{font-size:14px;font-weight:bold}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.toolbar input,.toolbar select{width:auto;min-width:150px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#f8fafc;padding:14px;border-radius:7px;margin:10px 0}
+.notice{background:#e0efff;padding:12px;border-radius:6px;margin:12px 0}
+.hidden{display:none!important}
+.number{font-size:27px;color:#2563a6;font-weight:bold;margin:10px}
+small{color:#64748b}
+footer{background:#17365d;color:white;text-align:center;padding:25px;line-height:1.8}
+@media(max-width:600px){header{justify-content:center;text-align:center}.hero h2{font-size:27px}.toolbar input,.toolbar select{width:100%}}
+</style>
+</head>
+<body>
+
+<header>
+<h1>📚 SmartLib</h1>
+<nav>
+<a href="#home">Home</a>
+<a href="#catalog">Book Catalog</a>
+<a href="#account">Login/Register</a>
+<a href="#history">My Borrowing</a>
+<a href="#materials">Study Materials</a>
+<a href="#profile">My Profile</a>
+<a href="#contact">Contact</a>
+<a href="#admin">Librarian Admin</a>
+</nav>
+</header>
+
+<div class="hero" id="home">
+<h2>Your Knowledge, One Click Away</h2>
+<p>Search books, manage borrowing, access study materials, and stay updated with SmartLib.</p>
+<button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Explore Books</button>
+<button onclick="document.getElementById('account').scrollIntoView({behavior:'smooth'})">Student Login</button>
+</div>
+
+<section id="services">
+<h2 class="title">Library Services</h2>
+<div class="cards">
+<div class="card"><div class="emoji">🔎</div><h3>Book Search</h3><p>Search books by title, author, category, or ISBN.</p></div>
+<div class="card"><div class="emoji">📖</div><h3>Book Borrowing</h3><p>View issued books, due dates, and return status.</p></div>
+<div class="card"><div class="emoji">💰</div><h3>Fine Management</h3><p>Check overdue books and calculated fines.</p></div>
+<div class="card"><div class="emoji">🎓</div><h3>Study Materials</h3><p>Find materials by academic year and semester.</p></div>
+</div>
+</section>
+
+<section id="catalog">
+<h2 class="title">📚 Book Catalog</h2>
+<div class="toolbar">
+<input id="bookSearch" placeholder="Search title, author, ISBN..." oninput="renderBooks()">
+<select id="bookCategory" onchange="renderBooks()">
+<option value="All">All Categories</option>
+<option>Computer Science</option><option>Artificial Intelligence</option><option>Mathematics</option><option>Literature</option><option>Electronics</option><option>General</option>
+</select>
+<select id="availabilityFilter" onchange="renderBooks()">
+<option value="All">All Books</option><option value="Available">Available</option><option value="Issued">Issued</option>
+</select>
+</div>
+<div class="books" id="bookList"></div>
+</section>
+
+<section id="account">
+<h2 class="title">Student Registration & Login</h2>
+<div class="panel">
+<h3>Register as a Student</h3>
+<form onsubmit="registerStudent(event)">
+<label>Full Name</label><input id="regName" required>
+<label>Student Register Number</label><input id="regNumber" required>
+<label>Email</label><input type="email" id="regEmail" required>
+<label>Password</label><input type="password" id="regPassword" minlength="4" required>
+<button type="submit">Register</button>
+</form>
+<hr>
+<h3>Student Login</h3>
+<form onsubmit="loginStudent(event)">
+<label>Email</label><input type="email" id="loginEmail" required>
+<label>Password</label><input type="password" id="loginPassword" required>
+<button type="submit">Login</button>
+<button type="button" class="secondary" onclick="logoutStudent()">Logout</button>
+</form>
+<div id="loginStatus" class="notice">Please register or log in to access your library account.</div>
+</div>
+</section>
+
+<section id="dashboard">
+<h2 class="title">Student Dashboard</h2>
+<div class="cards">
+<div class="card"><h3>Issued Books</h3><div class="number" id="issuedCount">0</div></div>
+<div class="card"><h3>Available Books</h3><div class="number" id="availableCount">0</div></div>
+<div class="card"><h3>Outstanding Fine</h3><div class="number" id="fineAmount">₹0</div></div>
+<div class="card"><h3>Study Materials</h3><div class="number" id="materialCount">0</div></div>
+</div>
+</section>
+
+<section id="history">
+<h2 class="title">📋 My Borrow History & Fine</h2>
+<div class="panel">
+<p><small>Demo fine policy: ₹5 per day after the due date. The fine is calculated using the current date.</small></p>
+<div id="borrowHistory"></div>
+<h3>Fine Summary</h3>
+<div id="fineSummary" class="notice">Log in to view your fines.</div>
+</div>
+</section>
+
+<section id="materials">
+<h2 class="title">🎓 Academic Study Materials</h2>
+<div class="panel">
+<div class="toolbar">
+<select id="materialYear" onchange="renderMaterials()"><option value="All">All Years</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
+<select id="materialSemester" onchange="renderMaterials()"><option value="All">All Semesters</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+<input id="materialSearch" placeholder="Search materials..." oninput="renderMaterials()">
+</div>
+<div id="materialList"></div>
+</div>
+</section>
+
+<section id="profile">
+<h2 class="title">👤 My Profile</h2>
+<div class="panel">
+<form onsubmit="updateProfile(event)">
+<label>Full Name</label><input id="profileName" required>
+<label>Register Number</label><input id="profileReg" required>
+<label>Email</label><input id="profileEmail" type="email" required>
+<button type="submit">Update Profile</button>
+</form>
+</div>
+</section>
+
+<section id="contact">
+<h2 class="title">Contact the Library</h2>
+<div class="panel">
+<p>Need help finding a book or managing your library account? Send a message to the librarian.</p>
+<form onsubmit="sendContact(event)">
+<label>Your Name</label><input id="contactName" required>
+<label>Your Email</label><input type="email" id="contactEmail" required>
+<label>Subject</label><input id="contactSubject" required>
+<label>Message</label><textarea id="contactMessage" required></textarea>
+<button type="submit">Send Message</button>
+</form>
+<div id="contactResult"></div>
+</div>
+</section>
+
+<section id="admin">
+<h2 class="title">🔐 Librarian Admin Dashboard</h2>
+<div class="panel">
+<h3>Admin Login</h3>
+<p><small>Demo password: LIB123</small></p>
+<form onsubmit="adminLogin(event)">
+<label>Administrator Password</label><input type="password" id="adminPassword" required>
+<button type="submit">Login as Librarian</button>
+</form>
+<div id="adminPanel" class="hidden">
+<div class="notice">Admin access granted. Manage the book inventory, student accounts, issued books, fines, and academic materials.</div>
+
+<h3>Add a New Book</h3>
+<form onsubmit="addBook(event)">
+<label>Book Title</label><input id="newTitle" required>
+<label>Author</label><input id="newAuthor" required>
+<label>ISBN</label><input id="newISBN" required>
+<label>Category</label><select id="newCategory"><option>Computer Science</option><option>Artificial Intelligence</option><option>Mathematics</option><option>Literature</option><option>Electronics</option><option>General</option></select>
+<label>Publication Year</label><input type="number" id="newBookYear" min="1900" max="2100" required>
+<label>Number of Copies</label><input type="number" id="newCopies" min="1" value="1" required>
+<label>Description</label><textarea id="newDescription" required></textarea>
+<button type="submit">Add Book</button>
+</form>
+
+<h3>Manage Inventory</h3><div id="adminBooks"></div>
+<h3>Manage Student Accounts</h3><div id="adminStudents"></div>
+
+<h3>Issue a Book</h3>
+<form onsubmit="issueBook(event)">
+<label>Student Register Number</label><input id="issueStudent" required>
+<label>Book</label><select id="issueBookSelect" required></select>
+<label>Issue Date</label><input type="date" id="issueDate" required>
+<label>Due Date</label><input type="date" id="dueDate" required>
+<button type="submit">Issue Book</button>
+</form>
+
+<h3>Issued Books & Returns</h3><div id="adminIssues"></div>
+
+<h3>Add Study Material</h3>
+<form onsubmit="addMaterial(event)">
+<label>Material Title</label><input id="newMaterialTitle" required>
+<label>Subject</label><input id="newMaterialSubject" required>
+<label>Academic Year</label><select id="newMaterialYear"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+<label>Semester</label><select id="newMaterialSemester"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+<label>Download URL</label><input id="newMaterialURL" placeholder="Enter a valid file or resource URL" required>
+<button type="submit">Add Study Material</button>
+</form>
+<h3>Manage Study Materials</h3><div id="adminMaterials"></div>
+<h3>Contact Messages</h3><div id="adminContacts"></div>
+</div>
+</div>
+</section>
+
+<footer>
+<h2>📚 SmartLib Library Management System</h2>
+<p>Discover Knowledge. Read More. Learn Better.</p>
+<p>Book Catalog | Borrowing | Fine Management | Academic Materials</p>
+<p>© 2026 SmartLib. All rights reserved.</p>
+<p><small>Educational front-end demo. Data is stored in this browser only.</small></p>
+</footer>
+
+<script>
+const starterBooks=[
+{id:1,title:"Introduction to Algorithms",author:"Thomas H. Cormen",isbn:"9780262046305",category:"Computer Science",year:2022,copies:4,description:"A comprehensive introduction to algorithms and problem-solving techniques."},
+{id:2,title:"Artificial Intelligence: A Modern Approach",author:"Stuart Russell",isbn:"9780134610993",category:"Artificial Intelligence",year:2021,copies:3,description:"Core concepts, methods, and applications of artificial intelligence."},
+{id:3,title:"Engineering Mathematics",author:"B. S. Grewal",isbn:"9788174091955",category:"Mathematics",year:2020,copies:5,description:"A reference for engineering mathematics and numerical methods."},
+{id:4,title:"Clean Code",author:"Robert C. Martin",isbn:"9780132350884",category:"Computer Science",year:2019,copies:2,description:"Practical principles for writing readable and maintainable software."},
+{id:5,title:"The Great Gatsby",author:"F. Scott Fitzgerald",isbn:"9780743273565",category:"Literature",year:2018,copies:3,description:"A classic novel exploring ambition, love, and society."},
+{id:6,title:"Digital Electronics",author:"M. Morris Mano",isbn:"9780134549897",category:"Electronics",year:2020,copies:2,description:"An introduction to digital logic, circuits, and design."},
+{id:7,title:"Python Programming",author:"John Zelle",isbn:"9781590282755",category:"Computer Science",year:2022,copies:4,description:"An introduction to programming concepts using Python."},
+{id:8,title:"Data Science Handbook",author:"Jake VanderPlas",isbn:"9781491912058",category:"Computer Science",year:2021,copies:2,description:"Practical tools and techniques for data science."}
+];
+const starterMaterials=[
+{id:1,title:"Programming Fundamentals Notes",subject:"Programming",year:"1",semester:"1",url:"https://www.python.org/doc/"},
+{id:2,title:"Data Structures Reference",subject:"Data Structures",year:"2",semester:"3",url:"https://en.cppreference.com/"},
+{id:3,title:"Artificial Intelligence Resources",subject:"Artificial Intelligence",year:"2",semester:"4",url:"https://www.ibm.com/think/topics/artificial-intelligence"},
+{id:4,title:"Mathematics Learning Resources",subject:"Mathematics",year:"1",semester:"2",url:"https://www.khanacademy.org/math"}
+];
+function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function safe(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function money(v){return "₹"+Number(v).toLocaleString("en-IN")}
+let books=load("smartlibBooks",starterBooks);
+let students=load("smartlibStudents",[]);
+let issues=load("smartlibIssues",[]);
+let materials=load("smartlibMaterials",starterMaterials);
+let contacts=load("smartlibContacts",[]);
+let currentStudent=load("smartlibCurrentStudent",null);
+let adminOn=false;
+
+function registerStudent(e){
+ e.preventDefault();
+ const email=document.getElementById("regEmail").value.trim().toLowerCase();
+ const reg=document.getElementById("regNumber").value.trim();
+ if(students.some(s=>s.email===email||s.reg===reg)){alert("This email or register number is already registered.");return}
+ const s={id:Date.now(),name:document.getElementById("regName").value.trim(),reg,email,password:document.getElementById("regPassword").value};
+ students.push(s);save("smartlibStudents",students);
+ currentStudent={...s};save("smartlibCurrentStudent",currentStudent);
+ refresh();alert("Registration successful.");
+}
+function loginStudent(e){
+ e.preventDefault();
+ const email=document.getElementById("loginEmail").value.trim().toLowerCase();
+ const pass=document.getElementById("loginPassword").value;
+ const s=students.find(x=>x.email===email&&x.password===pass);
+ if(!s){alert("Invalid login details. Please register first.");return}
+ currentStudent={...s};save("smartlibCurrentStudent",currentStudent);
+ refresh();alert("Login successful.");
+}
+function logoutStudent(){currentStudent=null;localStorage.removeItem("smartlibCurrentStudent");refresh();alert("Logged out successfully.")}
+function updateProfile(e){
+ e.preventDefault();if(!currentStudent){alert("Please log in first.");return}
+ const reg=document.getElementById("profileReg").value.trim();
+ if(students.some(s=>s.reg===reg&&s.id!==currentStudent.id)){alert("That register number is already in use.");return}
+ currentStudent.name=document.getElementById("profileName").value.trim();
+ currentStudent.reg=reg;currentStudent.email=document.getElementById("profileEmail").value.trim().toLowerCase();
+ students=students.map(s=>s.id===currentStudent.id?{...s,...currentStudent}:s);
+ issues=issues.map(i=>i.studentId===currentStudent.id?{...i,studentEmail:currentStudent.email,studentReg:currentStudent.reg}:i);
+ save("smartlibStudents",students);save("smartlibCurrentStudent",currentStudent);save("smartlibIssues",issues);
+ refresh();alert("Profile updated.");
+}
+function renderBooks(){
+ const q=document.getElementById("bookSearch").value.toLowerCase();
+ const cat=document.getElementById("bookCategory").value;
+ const availability=document.getElementById("availabilityFilter").value;
+ const results=books.filter(b=>(b.title+" "+b.author+" "+b.isbn+" "+b.description).toLowerCase().includes(q)&&(cat==="All"||b.category===cat)&&(availability==="All"||(availability==="Available"?b.copies>b.issued:b.copies<=b.issued)));
+ document.getElementById("bookList").innerHTML=results.length?results.map(b=>`
+ <div class="book"><div class="cover">📘</div><h3>${safe(b.title)}</h3>
+ <p><b>Author:</b> ${safe(b.author)}</p><p><b>ISBN:</b> ${safe(b.isbn)}</p>
+ <p><b>Category:</b> ${safe(b.category)}</p><p><b>Publication Year:</b> ${safe(b.year)}</p>
+ <p>${safe(b.description)}</p><p><b>Available Copies:</b> ${Math.max(0,b.copies-(b.issued||0))}</p>
+ <button onclick="bookDetails(${b.id})">View Details</button></div>`).join(""):"<p>No matching books found.</p>";
+}
+function bookDetails(id){const b=books.find(x=>x.id===id);if(b)alert(b.title+"\nAuthor: "+b.author+"\nISBN: "+b.isbn+"\nCategory: "+b.category+"\nPublication Year: "+b.year+"\nAvailable Copies: "+Math.max(0,b.copies-(b.issued||0))+"\n\n"+b.description)}
+function adminLogin(e){
+ e.preventDefault();if(document.getElementById("adminPassword").value!=="LIB123"){alert("Incorrect admin password.");return}
+ adminOn=true;document.getElementById("adminPanel").classList.remove("hidden");renderAdmin();alert("Librarian login successful.");
+}
+function addBook(e){
+ e.preventDefault();if(!adminOn)return;
+ const isbn=document.getElementById("newISBN").value.trim();
+ if(books.some(b=>b.isbn===isbn)){alert("A book with this ISBN already exists.");return}
+ books.push({id:Date.now(),title:document.getElementById("newTitle").value.trim(),author:document.getElementById("newAuthor").value.trim(),isbn,category:document.getElementById("newCategory").value,year:Number(document.getElementById("newBookYear").value),copies:Number(document.getElementById("newCopies").value),issued:0,description:document.getElementById("newDescription").value.trim()});
+ save("smartlibBooks",books);e.target.reset();refresh();renderAdmin();alert("Book added successfully.");
+}
+function editBook(id){
+ if(!adminOn)return;const b=books.find(x=>x.id===id);if(!b)return;
+ const title=prompt("Update book title:",b.title);if(title===null)return;
+ const author=prompt("Update author:",b.author);if(author===null)return;
+ const copies=prompt("Update total copies:",b.copies);if(copies===null)return;
+ if(!Number.isInteger(Number(copies))||Number(copies)<(b.issued||0)){alert("Total copies cannot be less than the number of issued copies.");return}
+ b.title=title.trim()||b.title;b.author=author.trim()||b.author;b.copies=Number(copies);
+ save("smartlibBooks",books);refresh();renderAdmin();alert("Book updated.");
+}
+function deleteBook(id){
+ if(!adminOn)return;const b=books.find(x=>x.id===id);if(!b)return;
+ if((b.issued||0)>0){alert("Return all issued copies before deleting this book.");return}
+ if(confirm("Delete "+b.title+"?")){books=books.filter(x=>x.id!==id);save("smartlibBooks",books);refresh();renderAdmin();}
+}
+function issueBook(e){
+ e.preventDefault();if(!adminOn)return;
+ const reg=document.getElementById("issueStudent").value.trim();
+ const student=students.find(s=>s.reg.toLowerCase()===reg.toLowerCase());
+ const book=books.find(b=>b.id===Number(document.getElementById("issueBookSelect").value));
+ const issueDate=document.getElementById("issueDate").value,dueDate=document.getElementById("dueDate").value;
+ if(!student){alert("Student register number not found.");return}
+ if(!book||book.copies-(book.issued||0)<=0){alert("No copies available.");return}
+ if(!issueDate||!dueDate||dueDate<issueDate){alert("Enter valid issue and due dates.");return}
+ const active=issues.filter(i=>i.studentId===student.id&&i.bookId===book.id&&!i.returned);
+ if(active.length){alert("This student already has this book issued.");return}
+ issues.push({id:Date.now(),studentId:student.id,studentName:student.name,studentReg:student.reg,studentEmail:student.email,bookId:book.id,title:book.title,issueDate,dueDate,returned:false,returnDate:"",finePaid:false});
+ book.issued=(book.issued||0)+1;
+ save("smartlibIssues",issues);save("smartlibBooks",books);e.target.reset();refresh();renderAdmin();alert("Book issued successfully.");
+}
+function calculateFine(issue){
+ if(issue.returned)return Number(issue.fine||0);
+ const due=new Date(issue.dueDate+"T00:00:00"),now=new Date();now.setHours(0,0,0,0);
+ const days=Math.max(0,Math.floor((now-due)/86400000));
+ return days*5;
+}
+function returnBook(id){
+ if(!adminOn)return;const i=issues.find(x=>x.id===id);if(!i||i.returned)return;
+ i.returned=true;i.returnDate=new Date().toISOString().slice(0,10);i.fine=calculateFine({...i,returned:false});i.finePaid=false;
+ const b=books.find(x=>x.id===i.bookId);if(b)b.issued=Math.max(0,(b.issued||0)-1);
+ save("smartlibIssues",issues);save("smartlibBooks",books);refresh();renderAdmin();alert("Book marked as returned. Fine calculated: "+money(i.fine)+".");
+}
+function markFinePaid(id){
+ if(!adminOn)return;const i=issues.find(x=>x.id===id);if(!i)return;
+ i.fine=calculateFine(i);i.finePaid=true;save("smartlibIssues",issues);refresh();renderAdmin();alert("Fine marked as paid.");
+}
+function addMaterial(e){
+ e.preventDefault();if(!adminOn)return;
+ materials.push({id:Date.now(),title:document.getElementById("newMaterialTitle").value.trim(),subject:document.getElementById("newMaterialSubject").value.trim(),year:document.getElementById("newMaterialYear").value,semester:document.getElementById("newMaterialSemester").value,url:document.getElementById("newMaterialURL").value.trim()});
+ save("smartlibMaterials",materials);e.target.reset();refresh();renderAdmin();alert("Study material added.");
+}
+function deleteMaterial(id){
+ if(!adminOn)return;
+ if(confirm("Delete this study material?")){materials=materials.filter(m=>m.id!==id);save("smartlibMaterials",materials);refresh();renderAdmin();}
+}
+function renderMaterials(){
+ const year=document.getElementById("materialYear").value,sem=document.getElementById("materialSemester").value,q=document.getElementById("materialSearch").value.toLowerCase();
+ const list=materials.filter(m=>(year==="All"||m.year===year)&&(sem==="All"||m.semester===sem)&&(m.title+" "+m.subject).toLowerCase().includes(q));
+ document.getElementById("materialList").innerHTML=list.length?list.map(m=>`<div class="row"><div><b>${safe(m.title)}</b><br>Subject: ${safe(m.subject)}<br>Year: ${safe(m.year)} | Semester: ${safe(m.semester)}</div><button onclick="downloadMaterial(${m.id})">Open / Download</button></div>`).join(""):"<p>No study materials found.</p>";
+}
+function downloadMaterial(id){
+ const m=materials.find(x=>x.id===id);if(!m)return;
+ if(!/^https?:\/\//i.test(m.url)){alert("This material does not have a valid web URL.");return}
+ window.open(m.url,"_blank","noopener,noreferrer");
+}
+function sendContact(e){
+ e.preventDefault();contacts.unshift({id:Date.now(),name:document.getElementById("contactName").value,email:document.getElementById("contactEmail").value,subject:document.getElementById("contactSubject").value,message:document.getElementById("contactMessage").value,date:new Date().toLocaleString()});
+ save("smartlibContacts",contacts);document.getElementById("contactResult").innerHTML="<div class='notice'>Your message has been saved in this browser's demo storage.</div>";e.target.reset();renderAdmin();
+}
+function renderAdmin(){
+ if(!adminOn)return;
+ document.getElementById("adminBooks").innerHTML=books.map(b=>`<div class="row"><div><b>${safe(b.title)}</b><br>ISBN: ${safe(b.isbn)}<br>Copies: ${b.copies} | Issued: ${b.issued||0}</div><div><button onclick="editBook(${b.id})">Update</button><button class="danger" onclick="deleteBook(${b.id})">Delete</button></div></div>`).join("");
+ document.getElementById("adminStudents").innerHTML=students.length?students.map(s=>`<div class="row"><div><b>${safe(s.name)}</b><br>Register No: ${safe(s.reg)}<br>Email: ${safe(s.email)}</div><button class="danger" onclick="deleteStudent(${s.id})">Delete Student</button></div>`).join(""):"<p>No registered students.</p>";
+ document.getElementById("issueBookSelect").innerHTML=books.filter(b=>b.copies-(b.issued||0)>0).map(b=>`<option value="${b.id}">${safe(b.title)} (${b.copies-(b.issued||0)} available)</option>`).join("")||'<option value="">No books available</option>';
+ const active=issues.filter(i=>!i.returned);
+ document.getElementById("adminIssues").innerHTML=issues.length?issues.slice().reverse().map(i=>`<div class="row"><div><b>${safe(i.title)}</b><br>Student: ${safe(i.studentName)} (${safe(i.studentReg)})<br>Issue Date: ${safe(i.issueDate)}<br>Due Date: ${safe(i.dueDate)}<br>Status: ${i.returned?"Returned on "+safe(i.returnDate):"Issued"}<br>Fine: ${money(i.returned?i.fine||0:calculateFine(i))}${i.finePaid?" (Paid)":""}</div><div>${!i.returned?`<button onclick="returnBook(${i.id})">Mark Returned</button>`:""}${(i.fine||calculateFine(i))>0&&!i.finePaid?`<button onclick="markFinePaid(${i.id})">Mark Fine Paid</button>`:""}</div></div>`).join(""):"<p>No borrowing records.</p>";
+ document.getElementById("adminMaterials").innerHTML=materials.map(m=>`<div class="row"><div><b>${safe(m.title)}</b><br>Year ${safe(m.year)}, Semester ${safe(m.semester)}<br>${safe(m.subject)}</div><button class="danger" onclick="deleteMaterial(${m.id})">Delete</button></div>`).join("");
+ document.getElementById("adminContacts").innerHTML=contacts.length?contacts.map(c=>`<div class="row"><div><b>${safe(c.subject)}</b><br>${safe(c.name)} (${safe(c.email)})<br>${safe(c.message)}<br><small>${safe(c.date)}</small></div></div>`).join(""):"<p>No contact messages.</p>";
+}
+function deleteStudent(id){
+ if(!adminOn)return;const s=students.find(x=>x.id===id);if(!s)return;
+ if(issues.some(i=>i.studentId===id&&!i.returned)){alert("This student has books that must be returned first.");return}
+ if(confirm("Delete student "+s.name+"?")){students=students.filter(x=>x.id!==id);save("smartlibStudents",students);if(currentStudent?.id===id){currentStudent=null;localStorage.removeItem("smartlibCurrentStudent")}refresh();renderAdmin();}
+}
+function renderHistory(){
+ const mine=currentStudent?issues.filter(i=>i.studentId===currentStudent.id):[];
+ document.getElementById("borrowHistory").innerHTML=mine.length?mine.slice().reverse().map(i=>`<div class="row"><div><b>${safe(i.title)}</b><br>Issue Date: ${safe(i.issueDate)}<br>Due Date: ${safe(i.dueDate)}<br>Return Status: ${i.returned?"Returned":"Not Returned"}<br>Fine: ${money(i.finePaid?0:(i.returned?i.fine||0:calculateFine(i)))}${i.finePaid?" (Paid)":""}</div></div>`).join(""):"<p>No borrowing history available. Log in to view your records.</p>";
+ const outstanding=mine.reduce((sum,i)=>sum+(i.finePaid?0:(i.returned?i.fine||0:calculateFine(i))),0);
+ document.getElementById("fineSummary").textContent=currentStudent?"Outstanding fine: "+money(outstanding):"Log in to view your fines.";
+ document.getElementById("issuedCount").textContent=mine.filter(i=>!i.returned).length;
+ document.getElementById("fineAmount").textContent=money(outstanding);
+}
+function refresh(){
+ document.getElementById("loginStatus").textContent=currentStudent?"Logged in as "+currentStudent.name+" ("+currentStudent.reg+")":"Please register or log in to access your library account.";
+ document.getElementById("profileName").value=currentStudent?.name||"";
+ document.getElementById("profileReg").value=currentStudent?.reg||"";
+ document.getElementById("profileEmail").value=currentStudent?.email||"";
+ document.getElementById("availableCount").textContent=books.reduce((s,b)=>s+Math.max(0,b.copies-(b.issued||0)),0);
+ document.getElementById("materialCount").textContent=materials.length;
+ renderBooks();renderMaterials();renderHistory();
+ if(adminOn)renderAdmin();
+}
+refresh();
+</script>
+</body>
+</html>
